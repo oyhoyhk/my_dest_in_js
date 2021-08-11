@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        body{
+            width:100vw;
+            height:100vh;
+            perspective:2000;
+            position:relative;
+            overflow:hidden;
+            background-image:url('./desk.jpg');
+            background-size:100% 100%;
+        }
+        #title{
+            width:100%;
+            position:absolute;
+            left:0;
+            top:5%;
+            text-align:center;
+            font-size:3rem;
+            z-index:99;
+        }
+        #now{
+            width:100%;
+            position:absolute;
+            font-weight:bold;
+            left:0;
+            top:15%;
+            font-size:1.5rem;
+            text-align:center;
+        }
+        #con{
+            transform-style:preserve-3d;
+            transform:rotateX(-4deg);
+        }
+        .container{
+            width:600px;
+            height:600px;
+            position:absolute;
+            left:calc(50% - 300px);
+            top:calc(50% - 300px);
+            transform-origin:center center -600px;
+            transition:1s;
+            transform-style:preserve-3d
+        }
+      
+        #one{
+            transform: translateZ(8000px) rotateY(0);
+        }
+        #two{
+            transform:translateZ(8000px) rotateY(120deg);
+        }
+        #three{
+            transform:translateZ(8000px) rotateY(240deg);
+        }
+        .front{
+            width:100%;
+            height:100%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            position:absolute;
+            left:0;
+            top:0;
+            transform:rotateY(0);
+            background:white;
+            backface-visibility: hidden;
+            border:3px solid black;
+            border-radius:15px
+        }
+        .back{
+            width:100%;
+            height:100%;
+            position:absolute;
+            left:0;
+            top:0;
+            transform:rotateY(180deg);
+            backface-visibility:hidden;
+            background-image:url('./card_back.png');
+            background-size:100% 100%;
+        }
+        #left{
+            position:absolute;
+            left:0;
+            bottom:0;
+            width:200px;
+            height:150px;
+            background:coral;
+        }
+        #right{
+            position:absolute;
+            right:0;
+            bottom:0;
+            width:200px;
+            height:150px;
+            background:coral;
+        }
+    </style>
+</head>
+<body>
+    <div id="left">LEFT</div>
+    <div id="right">RIGHT</div>
+    <h1 id="title">GAME BOX</h1>
+    <div id="now">기억력테스트</div>
+    <div id="con">
+        <div id="one" class="container">
+            <div class="front">ONE</div>
+            <div class="back"></div>
+        </div>
+        <div id="two" class="container">
+            <div class="front">TWO</div>
+            <div class="back"></div>
+        </div>
+        <div id="three" class="container">
+            <div class="front">THREE</div>
+            <div class="back"></div>
+        </div>
+    </div>
+    <div id="floor"></div>
+    <div id="desk"></div>
+    <script>
+        const left = document.getElementById('left');
+        const right = document.getElementById('right');
+
+        const containers = document.querySelectorAll('.container')
+        const arr = [0, 120, 240]
+        left.addEventListener('click',()=>{
+            containers.forEach((el,idx)=> {
+                el.style.transform=`translateZ(8000px) rotateY(${arr[idx]-120}deg)`;
+                arr[idx]=arr[idx]-120;
+                console.log(arr);
+            })
+        })
+        right.addEventListener('click',()=>{
+            containers.forEach((el,idx)=> {
+                el.style.transform=`translateZ(8000px) rotateY(${arr[idx]+120}deg)`;
+                arr[idx]=arr[idx]+120;
+                console.log(arr);
+            })
+        })
+    </script>
+</body>
+</html>
