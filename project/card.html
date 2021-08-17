@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #con {
+            width: 800px;
+            height: 600px;
+            border: 10px solid black;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+        }
+        #transparent_cover{
+            width:100%;
+            height:100%;
+            background:transparent;
+            position:absolute;
+            left:0;
+            top:0;
+            display:none;
+            z-index:10;
+        }
+        .card_row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+        }
+
+        .card_con {
+            height: 100%;
+            transition:.5s;
+        }
+
+        .card {
+            border: 1px solid black;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: 1s;
+            transform-style: preserve-3d;
+            cursor:pointer;
+        }
+
+        .card_front {
+            background: yellow;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+        }
+
+        .card_back {
+            backface-visibility: hidden;
+            width: 100%;
+            height: 100%;
+            background: black;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform: rotateY(180deg);
+        }
+        .card_on{
+            transform:rotateY(180deg);
+        }
+    </style>
+</head>
+
+<body>
+    <button id="go">GO</button>
+    <button id="back">Back</button>
+    <div id="con">
+        <div id="transparent_cover"></div>
+    </div>
+    <script>
+        const go = document.getElementById('go');
+        const back = document.getElementById('back');
+
+        let stage = 1;
+
+        const box = document.getElementById('box');
+        let currentDegree = 0;
+        go.addEventListener('click', () => {
+            currentDegree += 360;
+            box.style.transform = `rotateX(${currentDegree}deg)`;
+        })
+        back.addEventListener('click', () => {
+            currentDegree -= 360;
+            box.style.transform = `rotateX(${currentDegree}deg)`;
+        })
+
+        createCardGame(stage)
+        // 1 단계 : 4장 2단계 6장 3단계 8장 4단계 10장 5단계 12장 6단계 14장 7단계 16장
+        function createCardGame(stage) {
+            const card_container = document.getElementById('con');
+            const colors = ['orange', 'red', 'green', 'coral', 'tomato'];
+
+            card_container.innerHTML = '';
+            //                   1,2,3, 4, 5, 6, 7  단계
+            const stageList = [0, 4, 6, 8, 12, 16, 18, 20]
+            const answer = createRandomArray(stageList[stage]);
+            const transparentCover = document.createElement('div')
+            transparentCover.id='transparent_cover';
+            card_container.appendChild(transparentCover);
+            const cardList = [];
+            let input = [];
+            console.log(answer);
+            switch (stageList[stage]) {
+                case 4:
+                    for (let i = 0; i < 2; i++) {
+                        const row = document.createElement('div');
+                        row.style.height = '46%';
+                        row.classList.add('card_row');
+                        for (let j = 0; j < 2; j++) {
+                            const cardCon = document.createElement('div');
+                            const card = createCard();
+                            cardCon.classList.add('card_con')
+                            cardCon.style.width = '47%';
+                            cardCon.appendChild(card);
+                            row.appendChild(cardCon);
+                            cardCon.addEventListener('click', () => {
+                                const transparentCover = document.getElementById('transparent_cover');
+                                card.style.transform = 'rotateY(180deg)'
+                                input.push(2 * i + j);
+                                setTimeout(() => {
+                                    if (input.length === 2) {
+                                        if (checkCardInput(input, answer)) {
+                                            alert("성공");
+                                        } else {
+                                            alert("실패");
+                                        }
+                                        input = [];
+                                    }
+                                }, 800)
+                                transparentCover.style.display='block';
+                                setTimeout(()=>{
+                                    transparentCover.style.display='none';
+                                },1000)
+                                console.log(2*i+j);
+                                console.log(input);
+                            })
+                            cardList.push(card.children[1]);
+                        }
+                        card_container.appendChild(row);
+                    }
+                    answer.forEach(el => {
+                        const color = colors.splice(Math.floor(Math.random() * colors.length), 1)[0]
+                        el.forEach(element => {
+                            cardList[element].style.background = color;
+                        })
+                    })
+                    showCards(cardList);
+                    break;
+                case 6:
+                    for (let i = 0; i < 3; i++) {
+                        const row = document.createElement('div');
+                        row.style.height = '31%';
+                        row.classList.add('card_row');
+                        for (let j = 0; j < 2; j++) {
+                            const cardCon = document.createElement('div');
+                            const card = createCard();
+                            cardCon.classList.add('card_con')
+                            cardCon.style.width = '47%';
+                            cardCon.appendChild(card);
+                            row.appendChild(cardCon);
+                            cardCon.addEventListener('click', () => {
+                                card.style.transform = 'rotateY(180deg)'
+                                input.push(2 * i + j);
+                                setTimeout(() => {
+                                    if (input.length === 2) {
+                                        if (checkCardInput(input, answer)) {
+                                            alert("성공");
+                                        } else {
+                                            alert("실패");
+                                        }
+                                        input = [];
+
+                                    }
+                                }, 1000)
+
+                            })
+                            cardList.push(card.children[1]);
+                        }
+                        card_container.appendChild(row);
+                    }
+                    answer.forEach(el => {
+                        const color = colors.splice(Math.floor(Math.random() * colors.length), 1)[0]
+                        el.forEach(element => {
+                            cardList[element].style.background = color;
+                        })
+                    })
+                    break;
+            }
+        }
+        function showCards(cardList){
+            const temp=[...cardList];
+            const randomList =[];
+            const transparentCover = document.getElementById('transparent_cover');
+            transparentCover.style.display='block';
+            for(let i=0;i<cardList.length ;i++){
+                randomList.push(temp.splice(Math.floor(Math.random()*temp.length),1)[0]);
+            }
+            console.log(randomList);
+            for(let i=0;i<cardList.length;i++){
+                setTimeout(()=>{
+                    randomList[i].parentNode.classList.add('card_on')
+                    setTimeout(()=>{
+                        randomList[i].parentNode.classList.remove('card_on');
+                    },1000)
+                },i*700)
+            }
+            setTimeout(()=>{
+                transparentCover.style.display='none';
+            }, cardList.length*700+1000)
+        }
+        function createRandomArray(stage) {
+            const len = stage
+            const arr = new Array(len).fill(0).map((el, idx) => idx);
+            const temp = [];
+            const result = [];
+            while (arr.length !== 0) {
+                temp.push(arr.splice(Math.floor(Math.random() * arr.length), 1)[0]);
+            }
+            while (temp.length !== 0) {
+                result.push(temp.splice(0, 2));
+            }
+            return result;
+        }
+
+        function checkCardInput(input, answer) {
+            const ans = answer.map(el => el.sort().map(e => e.toString()).join(''));
+            const inp = input.sort((a, b) => a - b).map(el => el.toString()).join('');
+            console.log(ans, inp);
+            return ans.includes(inp) ? true : false;
+        }
+
+        function createCard() {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            const cardFront = document.createElement('div');
+            const cardBack = document.createElement('div');
+            cardFront.classList.add('card_front');
+            cardBack.classList.add('card_back');
+            card.appendChild(cardFront);
+            card.appendChild(cardBack);
+            return card;
+        }
+    </script>
+</body>
+
+</html>
