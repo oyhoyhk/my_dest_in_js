@@ -1,38 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sample</title>
-    <link rel="stylesheet" href="./style2.css">
-    <script src="main.js">
-        </script>
+    <title></title>
+    <link rel="stylesheet" href="discovery.css">
 </head>
+
 <body>
-    <h1 class="title">
-        <div>기억력 테스트</div>
-        <div class="diff">
-            <div>난이도 : <span id="difficult">1</span></div>
-            <div class="diffButtonBox">
-                <div id="up"></div><div id="down"></div></span>
+    <div id="test">시계 위젯, 달력 위젯 책꽂이</div>
+
+    <div id="monitor">
+        <div id="game_container">
+            <div id="list_cover">
+                <div id="game_list">
+                    <div class="li">● 순서 맞추기</div>
+                    <div class="li">● 카드 뒤집기</div>
+                    <div class="li">● ??? ???</div>
+                </div>
+            </div>
+            <div id="game">
+                <div id="game_exit"></div>
+            </div>
+            <div id="game_name">
+                <div id="game_info"></div>
+            </div>
+            <div id="start_cover">
+                <div id="initiate_button">Start...</div>
+            </div>
+
+        </div>
+    </div>
+    <div id="mouse">
+        <div id="mouse_background">
+            <div id="left_hover_background"></div>
+            <div id="right_hover_background"></div>
+            <div id="mouse_background_image"></div>
+        </div>
+        <div id="left_button" class="mouse_button"></div>
+        <div id="right_button" class="mouse_button"></div>
+
+    </div>
+    <div id="background">
+        <div id="postit1">
+            <div class="postit_cover"></div>
+            <div class="postit_container">
+                <div>단계</div>
+                <div id="board_stage"></div>
             </div>
         </div>
-    </h1>
-    <a href="./card.html" style="position:absolute;left:10%;top:50%;"><button>카드 게임</button></a>
-    <div id="con">
-        <div id="cover">
-            <div id="msg"></div>
-            <div id="game">시작하기</div>
+        <div id="postit2">
+            <div class="postit_cover"></div>
+            <div class="postit_container">
+                <div>기회</div>
+                <div id="board_chance"></div>
+            </div>
         </div>
-        <div id="innerCover"></div>
-        <div id="container"></div>
+
+        <div id="background_upper"></div>
+        <div id="background_below">
+            <div id="desktop"></div>
+        </div>
     </div>
-    <div id="score_box">
-        <div class="score_total">총 게임: <span id="total">0</span></div>
-        <div>승 : <span id="win">0</span></div>
-        <div>패 : <span id="lose">0</span></div>
-    </div>
-    <div id="testBox"></div>
+    <script>
+        // 모니터 켜는 부분
+        const initButton = document.getElementById('initiate_button');  // 인트로 시작 버튼
+        const startCover = document.getElementById('start_cover'); // 인트로 커버
+        const postitCovers = document.querySelectorAll('.postit_cover'); // 포스트잇(정보)
+        const gameInfo = document.getElementById('game_info'); // 게임 제목
+        const leftButton = document.getElementById('left_button'); // 마우스 이미지 왼쪽버튼
+        const rightButton = document.getElementById('right_button'); //마우스 이미지 오른쪽버튼
+        const mouse = document.getElementById('mouse'); //마우스 이미지
+
+        const gameExit = document.getElementById('game_exit');  //게임창 나가기 버튼
+        const gameList = document.querySelectorAll('.li'); // 게임 리스트
+        const gameWindow = document.getElementById('game'); // 게임 창
+
+        initMouseEvent(); // 마우스 호버 이벤트 추가
+
+        let gameInfoDegree = 0;
+        let currentGame = null;
+        let initCount = 2;
+        let initInterval = setInterval(() => {
+            initButton.textContent = `Start${'.'.repeat(1+initCount%3)}`
+            initCount++;
+        }, 1000)
+
+        let games = {
+            order: {
+                name: '순서 맞추기',
+                stage: 1,
+                chance: [1, 1, 1, 2, 2, 2, 3, 3, 3],
+                initGame: function () {
+                    document.getElementById('board_stage').textContent = this.stage;
+                    document.getElementById('board_chance').textContent = this.chance[stage - 1];
+                }
+            },
+            card: {
+                name: "같은 그림 찾기",
+                stage: 1,
+                chance: [1, 2, 2, 3, 4, 4, 5, 5],
+                stageList: [0, 4, 6, 8, 12, 16, 18, 20],
+            }
+        }
+
+        
+        gameExit.addEventListener('click',()=>{
+            gameInfoDegree-=360;
+            gameInfo.style.transform=`rotateX(${gameInfoDegree}deg)`;
+            postitCovers.forEach(el=>{
+                el.classList.remove('postit_cover_off');
+            })
+            currentGame=null;
+            mouse.style.opacity=0;
+            setTimeout(()=>{
+                gameInfo.textContent='';
+                setTimeout(()=>{
+                    gameWindow.classList.remove('game_on');
+                },500)
+            },200)
+        })
+
+        // 게임 리스트에서 게임 선택
+
+        gameList.forEach(el => {
+            el.addEventListener('click', () => {
+                gameWindow.classList.add('game_on');
+                postitCovers.forEach(el => {
+                    el.classList.add('postit_cover_off');
+                })
+                currentGame = games.order;
+                gameInfoDegree += 360;
+                setTimeout(()=>{
+                    gameInfo.style.transform = `rotateX(-${gameInfoDegree}deg)`;
+                    setTimeout(() => {
+                       gameInfo.textContent = el.textContent.slice(2);
+                    }, 500)
+                },1000)
+                
+                mouse.style.opacity = 1;
+            })
+
+        })
+
+        // 맨 처음 인트로 페이지 시작 버튼 누르면
+        // 게임 리스트가 나옴
+
+        initButton.addEventListener('click', () => {
+            clearInterval(initInterval);
+            startCover.classList.add('init_event');
+            setTimeout(() => {
+                startCover.style.display = 'none';
+            }, 1000)
+        })
+
+        function initMouseEvent() {  // 마우스아이콘에 이벤트 등록 함수
+            leftButton.onmouseenter = () => {
+                document.getElementById('left_hover_background').style.background = '#0b6676';
+            }
+            rightButton.onmouseenter = () => {
+                document.getElementById('right_hover_background').style.background = '#0b6676';
+            }
+            leftButton.onmouseleave = () => {
+                document.getElementById('left_hover_background').style.background = 'transparent';
+            }
+            rightButton.onmouseleave = () => {
+                document.getElementById('right_hover_background').style.background = 'transparent';
+            }
+        }
+    </script>
 </body>
+
 </html>
