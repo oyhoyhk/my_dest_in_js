@@ -27,6 +27,16 @@
             <div id="game_name">
                 <div id="game_info"></div>
             </div>
+            <div id="game_screen">
+                <div id="game_content"></div>
+                <div id="notice_cover">
+                    <div id="notice_info"></div>
+                    <div id="reset"></div>
+                </div>
+                <div id="ready_cover" class="ready_small"></div>
+                <div id="game_screen_cover"></div>
+            </div>
+
             <div id="start_cover">
                 <div id="initiate_button">Start...</div>
             </div>
@@ -66,15 +76,17 @@
     </div>
     <script>
         // 모니터 켜는 부분
-        const initButton = document.getElementById('initiate_button');  // 인트로 시작 버튼
+        const initButton = document.getElementById('initiate_button'); // 인트로 시작 버튼
         const startCover = document.getElementById('start_cover'); // 인트로 커버
         const postitCovers = document.querySelectorAll('.postit_cover'); // 포스트잇(정보)
         const gameInfo = document.getElementById('game_info'); // 게임 제목
         const leftButton = document.getElementById('left_button'); // 마우스 이미지 왼쪽버튼
         const rightButton = document.getElementById('right_button'); //마우스 이미지 오른쪽버튼
         const mouse = document.getElementById('mouse'); //마우스 이미지
+        const gameScreen = document.getElementById('game_screen');
+        const gameContent = document.getElementById('game_content');
 
-        const gameExit = document.getElementById('game_exit');  //게임창 나가기 버튼
+        const gameExit = document.getElementById('game_exit'); //게임창 나가기 버튼
         const gameList = document.querySelectorAll('.li'); // 게임 리스트
         const gameWindow = document.getElementById('game'); // 게임 창
 
@@ -88,14 +100,32 @@
             initCount++;
         }, 1000)
 
+
         let games = {
             order: {
                 name: '순서 맞추기',
                 stage: 1,
-                chance: [1, 1, 1, 2, 2, 2, 3, 3, 3],
-                initGame: function () {
+                boxNum: [4, 4, 4, 4, 9, 9, 9, 9, 16, 16],
+                chance: [1, 1, 1, 1, 2, 2, 2, 3, 3, 3],
+                difficult: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                initGame: function (chance = this.chance[this.stage - 1]) {
                     document.getElementById('board_stage').textContent = this.stage;
-                    document.getElementById('board_chance').textContent = this.chance[stage - 1];
+                    document.getElementById('board_chance').textContent = chance;
+                },
+
+                checkInput: function (input, answer) {
+                    const inputString = input.map(el => el.toString()).join('');
+                    const answerString = answer.slice(0, input.length).map(el => el.toString()).join('');
+
+                    return inputString === answerString;
+                },
+                createRandomArray: function () {
+                    const len = this.difficult[this.stage - 1];
+                    const arr = [];
+                    for (let i = 0; i < len; i++) {
+                        arr.push(Math.floor(Math.random() * this.boxNum[this.stage - 1]));
+                    }
+                    return arr;
                 }
             },
             card: {
@@ -103,43 +133,169 @@
                 stage: 1,
                 chance: [1, 2, 2, 3, 4, 4, 5, 5],
                 stageList: [0, 4, 6, 8, 12, 16, 18, 20],
-            }
-        }
+                initGame: function (chance = this.chance[this.stage - 1]) {
+                    document.getElementById('board_stage').textContent = this.stage;
+                    document.getElementById('board_chance').textContent = chance;
+                },
+            },
 
-        
-        gameExit.addEventListener('click',()=>{
-            gameInfoDegree-=360;
-            gameInfo.style.transform=`rotateX(${gameInfoDegree}deg)`;
-            postitCovers.forEach(el=>{
+        }
+         function createOrderGame () {
+                    readyForGame();
+                    const gameContainer = document.getElementById('game_content');
+                    gameContainer.innerHTML = '';
+                    const screenCover = document.getElementById('game_screen_cover');
+                    const boxNum = Math.sqrt(games.order.boxNum[games.order.stage - 1]);
+                    const difficult = games.order.difficult[games.order.stage - 1];
+                    let chance = games.order.chance[games.order.stage - 1];
+                    const answer = games.order.createRandomArray(games.order.stage);
+                    const input = [];
+                    const noticeCover= document.getElementById('notice_cover');
+                    const reset = document.getElementById('reset');
+
+                    console.log(answer);
+                    for (let i = 0; i < boxNum; i++) {
+                        const row = document.createElement('div');
+                        row.classList.add('order_row');
+                        row.style.height = `${90/boxNum}%`;
+                        for (let j = 0; j < boxNum; j++) {
+                            const box = document.createElement('div');
+                            box.classList.add('order_box');
+                            box.style.width = `${90/boxNum}%`;
+                            box.addEventListener('click', (e) => {
+                                input.push(i * boxNum + j);
+                                console.log(input);
+                                if (games.order.checkInput(input, answer)) {
+                                    e.target.style.background = 'skyblue';
+                                    if (input.length === answer.length) {
+                                        gameInfo.style.opacity=0;
+                                        noticeCover.style.display='flex';
+                                        noticeCover.children[0].textContent='Success!';
+                                        noticeCover.children[1].textContent='다음 단계';
+                                        noticeCover.style.color='#fffbc5';
+                                        noticeCover.children[1].style.border='5px solid #fffbc5';
+                                        gameContainer.innerHTML = '';
+                                        games.order.stage += 1;
+                                        setTimeout(()=>{
+                                            noticeCover.style.opacity=1;
+                                        },500)
+                                        games.order.initGame(chance);
+                                    }
+                                } else {
+                                    chance--;
+                                    games.order.initGame(chance);
+                                    if (chance > 0) {
+                                        e.target.classList.add('order_wrong');
+                                        setTimeout(() => {
+                                            e.target.classList.remove('order_wrong');
+                                        }, 1000)
+                                    } else {
+                                        gameInfo.style.opacity=0;
+                                        noticeCover.style.display='flex';
+                                        noticeCover.style.color='#c1c5c1';
+                                        noticeCover.children[1].style.border='5px solid #c1c5c1';
+                                        noticeCover.children[0].textContent='Failed...'
+                                        noticeCover.children[1].textContent='다시 하기'
+                                        gameContainer.innerHTML = '';
+                                        setTimeout(()=>{
+                                            noticeCover.style.opacity=1;
+                                            
+                                        },500)
+                                        games.order.stage=1;                       
+                                    }
+
+                                }
+                            })
+                            row.appendChild(box);
+                        }
+                        gameContainer.appendChild(row);
+                    }
+                    const boxes = document.querySelectorAll('.order_box');
+                    screenCover.style.display = 'block';
+                    answer.forEach((el, idx) => {
+                        setTimeout(() => {
+                            boxes[el].style.background = 'pink';
+                            setTimeout(() => {
+                                boxes[el].style.background = 'ivory';
+                            }, 700)
+                        }, 4000 + 1000 * idx)
+                    })
+                    setTimeout(() => {
+                        screenCover.style.display = 'none';
+                    }, 4000 + boxes.length * 1000);
+
+                    reset.addEventListener('click',()=>{
+                        gameInfo.style.opacity=1;
+                        games.order.initGame();
+                        noticeCover.style.opacity=0;
+                        setTimeout(()=>{
+                            noticeCover.style.display='none';
+                        createOrderGame(games.order.stage);
+                            
+                        },1000)
+                    })
+                }
+
+        gameExit.addEventListener('click', () => {
+            gameInfoDegree -= 360;
+            gameInfo.style.transform = `rotateX(${gameInfoDegree}deg)`;
+            postitCovers.forEach(el => {
                 el.classList.remove('postit_cover_off');
             })
-            currentGame=null;
-            mouse.style.opacity=0;
-            setTimeout(()=>{
-                gameInfo.textContent='';
-                setTimeout(()=>{
+            games[currentGame].stage=1;
+            currentGame = null;
+            mouse.style.opacity = 0;
+            gameContent.style.opacity = 0;
+            document.getElementById('ready_cover').style.display='none';
+            setTimeout(() => {
+                gameContent.style.display = 'none';
+                gameScreen.style.display = 'none';
+            }, 1000)
+            setTimeout(() => {
+                gameInfo.textContent = '';
+                setTimeout(() => {
                     gameWindow.classList.remove('game_on');
-                },500)
-            },200)
+                }, 500)
+            }, 200)
         })
 
         // 게임 리스트에서 게임 선택
 
         gameList.forEach(el => {
-            el.addEventListener('click', () => {
+            el.addEventListener('click', (e) => {
                 gameWindow.classList.add('game_on');
                 postitCovers.forEach(el => {
                     el.classList.add('postit_cover_off');
                 })
                 currentGame = games.order;
                 gameInfoDegree += 360;
-                setTimeout(()=>{
+                setTimeout(() => {
                     gameInfo.style.transform = `rotateX(-${gameInfoDegree}deg)`;
                     setTimeout(() => {
-                       gameInfo.textContent = el.textContent.slice(2);
+                        gameInfo.textContent = el.textContent.slice(2);
                     }, 500)
-                },1000)
-                
+                }, 1000)
+                const chosen = e.target.textContent.slice(2);
+                gameScreen.style.display = 'block';
+                gameContent.style.display = 'flex';
+
+                if (chosen === '순서 맞추기') {
+                    games.order.initGame();
+                    currentGame='order';
+                    setTimeout(() => {
+                        gameContent.style.opacity = 1;
+                        createOrderGame();
+                    }, 1000)
+                }
+                if (chosen == '카드 뒤집기'){
+                    games.card.initGame();
+                    setTimeout(()=>{
+                        setTimeout(() => {
+                        gameContent.style.opacity = 1;
+                        games.card.createGame();
+                    }, 1000)
+                    })
+                }
                 mouse.style.opacity = 1;
             })
 
@@ -156,7 +312,41 @@
             }, 1000)
         })
 
-        function initMouseEvent() {  // 마우스아이콘에 이벤트 등록 함수
+        function readyForGame() {
+            const readyCover = document.getElementById('ready_cover');
+            readyCover.textContent = '3';
+            readyCover.style.display = 'flex';
+            readyCover.style.opacity = 1;
+            setTimeout(() => {
+                readyCover.classList.remove('ready_small');
+                setTimeout(() => {
+                    readyCover.classList.add('ready_small');
+                    setTimeout(() => {
+                        readyCover.textContent = '2';
+                        readyCover.classList.remove('ready_small');
+                        setTimeout(() => {
+                            readyCover.classList.add('ready_small');
+                            setTimeout(() => {
+                                readyCover.classList.remove('ready_small');
+                                readyCover.textContent = '1';
+                                setTimeout(() => {
+                                    readyCover.classList.add(
+                                        'ready_small');
+                                    readyCover.opacity = 0;
+                                    setTimeout(() => {
+                                        readyCover.style
+                                            .display = 'none';
+                                    }, 500)
+                                }, 500)
+                            }, 500)
+                        }, 500)
+                    }, 500)
+                }, 500)
+            }, 500)
+
+        }
+
+        function initMouseEvent() { // 마우스아이콘에 이벤트 등록 함수
             leftButton.onmouseenter = () => {
                 document.getElementById('left_hover_background').style.background = '#0b6676';
             }
