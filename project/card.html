@@ -30,6 +30,15 @@
             justify-content: space-around;
             align-items: center;
         }
+        #card_cover{
+            width:100%;
+            height:100%;
+            position:absolute;
+            left:0;
+            top:0;
+            background:black;
+            z-index:11;
+        }
         #transparent_cover{
             width:100%;
             height:100%;
@@ -51,9 +60,11 @@
             height: 100%;
             transition:.5s;
         }
+        .card_front:hover{
+            box-shadow:5px 5px 10px black;
+        }
 
         .card {
-            border: 1px solid black;
             width: 100%;
             height: 100%;
             position: relative;
@@ -63,27 +74,60 @@
         }
 
         .card_front {
-            background: yellow;
+            background: transparent;
+            background-image:url('./img/card_front.png');
+            background-size:100% 100%;
             position: absolute;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
+            transition:.5s
         }
 
         .card_back {
             backface-visibility: hidden;
             width: 100%;
             height: 100%;
-            background: black;
             position: absolute;
             left: 0;
             top: 0;
             transform: rotateY(180deg);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            border:3px solid black;
+            border-radius:30px;
+        }
+        .card_image{
+            width:50%;
+            height:50%;
+            background-size:100% 100%;
         }
         .card_on{
             transform:rotateY(180deg);
+        }
+        #board{
+            position:absolute;
+            border:3px solid black;
+            width:250px;
+            height:200px;
+            left: 900px;
+            top:100px;
+            display:flex;
+            justify-content:space-around;
+            align-items:center;
+            flex-direction:column;
+        }
+        .board_row{
+            width:100%;
+            height:40%;
+            display:flex;
+            justify-content:space-around;
+            align-items:center;
+            font-size:1.8rem;
+            font-weight:bold;
         }
     </style>
 </head>
@@ -92,13 +136,24 @@
     <button id="go">GO</button>
     <button id="back">Back</button>
     <div id="con">
+        <div id="card_cover"></div>
         <div id="transparent_cover"></div>
+    </div>
+    <div id="board">
+        <div class="board_row">
+            <div>단계 :</div>
+            <div id="board_stage"></div>
+        </div>
+        <div class="board_row">
+            <div>남은 기회 : </div>
+            <div id="board_chance"></div>
+        </div>
     </div>
     <script>
         const go = document.getElementById('go');
         const back = document.getElementById('back');
 
-        let stage = 1;
+        let cardStage = 2;
 
         const box = document.getElementById('box');
         let currentDegree = 0;
@@ -111,23 +166,33 @@
             box.style.transform = `rotateX(${currentDegree}deg)`;
         })
 
-        createCardGame(stage)
+        createCardGame(cardStage)
         // 1 단계 : 4장 2단계 6장 3단계 8장 4단계 10장 5단계 12장 6단계 14장 7단계 16장
-        function createCardGame(stage) {
-            const card_container = document.getElementById('con');
-            const colors = ['orange', 'red', 'green', 'coral', 'tomato'];
+        function createCardGame(cardStage) {
+            const card_container = document.getElementById('con'); // 전체 컨테이너
+            const cardImages = [];   // 카드에 들어갈 이미지 주소
+            for(let i=0;i<27;i++){
+                cardImages.push(`./img/animal${i}.png`);
+            }
 
-            card_container.innerHTML = '';
+            card_container.innerHTML = ''; 
             //                   1,2,3, 4, 5, 6, 7  단계
-            const stageList = [0, 4, 6, 8, 12, 16, 18, 20]
-            const answer = createRandomArray(stageList[stage]);
-            const transparentCover = document.createElement('div')
+            const stageList  = [0, 4, 6, 8, 12, 16, 18, 20];
+            const defaultChance = [1, 2, 2, 3,  4,  4,  5,  5];
+            const answer = createRandomArray(stageList[cardStage]);
+            const checklist = answer.map(el=>el.sort((a,b)=>a-b).toString());
+            const transparentCover = document.createElement('div')   // 버그 방지용 투명 커버
             transparentCover.id='transparent_cover';
             card_container.appendChild(transparentCover);
             const cardList = [];
             let input = [];
-            console.log(answer);
-            switch (stageList[stage]) {
+            let cardChance = defaultChance[cardStage-1];
+
+            const boardStage = document.getElementById('board_stage');
+            const boardChance = document.getElementById('board_chance')
+            boardStage.textContent=cardStage;
+            boardChance.textContent=cardChance;
+            switch (stageList[cardStage]) {
                 case 4:
                     for (let i = 0; i < 2; i++) {
                         const row = document.createElement('div');
@@ -140,40 +205,57 @@
                             cardCon.style.width = '47%';
                             cardCon.appendChild(card);
                             row.appendChild(cardCon);
-                            cardCon.addEventListener('click', () => {
+                            cardCon.onclick = (e) => {
                                 const transparentCover = document.getElementById('transparent_cover');
                                 card.style.transform = 'rotateY(180deg)'
                                 input.push(2 * i + j);
                                 setTimeout(() => {
                                     if (input.length === 2) {
                                         if (checkCardInput(input, answer)) {
-                                            alert("성공");
+                                            console.log('in setTImeout');
+                                            console.log(input,answer);
+                                            console.log(checklist);
+                                            // 이미 성공한 카드 클릭 이벤트 제거
+                                            const cards = document.querySelectorAll('.card_con');
+                                            cards[input[0]].onclick='';
+                                            cards[input[1]].onclick='';
+                                            checklist.splice(checklist.indexOf(input.sort((a,b)=>a-b),1));
+                                            if(checklist.length===0){
+                                                console.log(`stage${cardStage} 성공`);
+                                                cardStage++;
+                                                createCardGame(cardStage);
+                                            }
                                         } else {
-                                            alert("실패");
+                                            cardChance--;
+                                            if(cardChance < 0){
+                                                alert('실패!')
+                                            }
                                         }
                                         input = [];
                                     }
-                                }, 800)
+                                }, 100)
+                                console.log(input);
                                 transparentCover.style.display='block';
                                 setTimeout(()=>{
                                     transparentCover.style.display='none';
                                 },1000)
                                 console.log(2*i+j);
                                 console.log(input);
-                            })
+                            }
                             cardList.push(card.children[1]);
                         }
                         card_container.appendChild(row);
                     }
                     answer.forEach(el => {
-                        const color = colors.splice(Math.floor(Math.random() * colors.length), 1)[0]
+                        const image = cardImages.splice(Math.floor(Math.random() * cardImages.length), 1)[0]
                         el.forEach(element => {
-                            cardList[element].style.background = color;
+                            console.log(cardList[element])
+                            cardList[element].children[0].style.backgroundImage=`url(${image})`;
                         })
                     })
                     showCards(cardList);
                     break;
-                case 6:
+                    case 6:
                     for (let i = 0; i < 3; i++) {
                         const row = document.createElement('div');
                         row.style.height = '31%';
@@ -185,32 +267,68 @@
                             cardCon.style.width = '47%';
                             cardCon.appendChild(card);
                             row.appendChild(cardCon);
-                            cardCon.addEventListener('click', () => {
+                            cardCon.onclick = (e) => {
+                                const transparentCover = document.getElementById('transparent_cover');
                                 card.style.transform = 'rotateY(180deg)'
                                 input.push(2 * i + j);
                                 setTimeout(() => {
                                     if (input.length === 2) {
                                         if (checkCardInput(input, answer)) {
-                                            alert("성공");
+                                            console.log('in setTImeout');
+                                            console.log(input,answer);
+                                            console.log(checklist);
+                                            // 이미 성공한 카드 클릭 이벤트 제거
+                                            const chosenCards = document.querySelectorAll('.card_con');
+                                            chosenCards[input[0]].onclick='';
+                                            chosenCards[input[1]].onclick='';
+                                            checklist.splice(checklist.indexOf(input.sort((a,b)=>a-b),1));
+                                            if(checklist.length===0){
+                                                console.log(`stage${cardStage} 성공`);
+                                                cardStage++;
+                                                createCardGame(cardStage);
+                                            }
                                         } else {
-                                            alert("실패");
+                                            cardChance--;
+                                            console.log('실패했을 때 ' ,input);
+                                            const chosenCard1 = document.querySelectorAll('.card')[input[0]];
+                                            const chosenCard2 = document.querySelectorAll('.card')[input[1]];
+                                            transparentCover.style.display='block';
+                                            
+                                            setTimeout(()=>{
+                                                chosenCard1.style.transform='rotate(0)';
+                                                chosenCard2.style.transform='rotate(0)';
+                                                transparentCover.style.display='none';
+                                            },800)
+                                            boardStage.textContent=cardStage;
+                                            boardChance.textContent=cardChance;
+                                            if(cardChance < 1){
+                                                alert('실패!')
+
+                                            }
                                         }
                                         input = [];
-
                                     }
-                                }, 1000)
-
-                            })
+                                }, 100)
+                                console.log(input);
+                                transparentCover.style.display='block';
+                                setTimeout(()=>{
+                                    transparentCover.style.display='none';
+                                },1000)
+                                console.log(2*i+j);
+                                console.log(input);
+                            }
                             cardList.push(card.children[1]);
                         }
                         card_container.appendChild(row);
                     }
                     answer.forEach(el => {
-                        const color = colors.splice(Math.floor(Math.random() * colors.length), 1)[0]
+                        const image = cardImages.splice(Math.floor(Math.random() * cardImages.length), 1)[0]
                         el.forEach(element => {
-                            cardList[element].style.background = color;
+                            console.log(cardList[element])
+                            cardList[element].children[0].style.backgroundImage=`url(${image})`;
                         })
                     })
+                    showCards(cardList);
                     break;
             }
         }
@@ -235,8 +353,8 @@
                 transparentCover.style.display='none';
             }, cardList.length*700+1000)
         }
-        function createRandomArray(stage) {
-            const len = stage
+        function createRandomArray(cardStage) {
+            const len = cardStage
             const arr = new Array(len).fill(0).map((el, idx) => idx);
             const temp = [];
             const result = [];
@@ -252,7 +370,6 @@
         function checkCardInput(input, answer) {
             const ans = answer.map(el => el.sort().map(e => e.toString()).join(''));
             const inp = input.sort((a, b) => a - b).map(el => el.toString()).join('');
-            console.log(ans, inp);
             return ans.includes(inp) ? true : false;
         }
 
@@ -261,8 +378,13 @@
             card.classList.add('card');
             const cardFront = document.createElement('div');
             const cardBack = document.createElement('div');
+            const cardImage = document.createElement('div');
+
             cardFront.classList.add('card_front');
             cardBack.classList.add('card_back');
+            cardImage.classList.add('card_image');
+
+            cardBack.appendChild(cardImage);
             card.appendChild(cardFront);
             card.appendChild(cardBack);
             return card;
