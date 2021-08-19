@@ -8,11 +8,21 @@
     <title>GameBox</title>
     <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
     <div id="left">LEFT</div>
     <div id="right">RIGHT</div>
     <h1 id="title">GAME BOX</h1>
     <div id="now">기억력테스트</div>
+    <button id="test">TEST</button>
+    <div id="score_board">
+        <div>총 : <div id="total" class="score">0</div>
+        </div>
+        <div>승 : <div id="win" class="score">0</div>
+        </div>
+        <div>패 : <div id="lose" class="score">0</div>
+        </div>
+    </div>
     <div id="con">
         <div id="one" class="container">
             <div id="memoryOrder" class="front">
@@ -34,90 +44,222 @@
             <div class="back"></div>
         </div>
     </div>
+
     <div id="floor"></div>
     <div id="desk"></div>
     <div id="upperBackground"></div>
     <div id="lowerBackground"></div>
     <script>
+        const scoreInfo = {
+            memory: [0, 0],
+            card: [0, 0]
+        }
         //회전목마 파트
         {
-        const left = document.getElementById('left');
-        const right = document.getElementById('right');
+            const left = document.getElementById('left');
+            const right = document.getElementById('right');
 
-        const containers = document.querySelectorAll('.container')
-        
-        let arr = [0, 120, 240]
-        let pos = [2,0,1]; // [0,1,2]
-        left.addEventListener('click', () => {
-            pos=pos.map(el=> el+1===3 ? 0 : el+1);
-            containers.forEach((el, idx) => {
-                arr[idx] = arr[idx]-120;
-                
-                el.style.transform =
-                    `translateZ(8000px) translateX(${pos[1]===idx ? 0 : pos[0] === idx ? '-700px' : '700px'}) scale(${pos[1]===idx ? 1 : 0.5}) rotateY(${arr[idx]}deg)`;
+            const containers = document.querySelectorAll('.container')
+
+            let arr = [0, 120, 240]
+            let pos = [2, 0, 1]; // [0,1,2]
+            left.addEventListener('click', () => {
+                pos = pos.map(el => el + 1 === 3 ? 0 : el + 1);
+                containers.forEach((el, idx) => {
+                    arr[idx] = arr[idx] - 120;
+
+                    el.style.transform =
+                        `translateZ(8000px) translateX(${pos[1]===idx ? 0 : pos[0] === idx ? '-700px' : '700px'}) scale(${pos[1]===idx ? 1 : 0.5}) rotateY(${arr[idx]}deg)`;
+                })
+                console.log(arr)
+                console.log(pos);
             })
-            console.log(arr)
-            console.log(pos);
-        })
-        right.addEventListener('click', () => {
-            pos=pos.map(el=> el-1===-1 ? 2 : el-1);
-            containers.forEach((el, idx) => {
-                arr[idx] = arr[idx] + 120;
-                el.style.transform =
-                    `translateZ(8000px) translateX(${pos[1]===idx ? 0 : pos[0] === idx  ? '-700px' : '700px'}) scale(${pos[1]===idx ? 1 : 0.5}) rotateY(${arr[idx]}deg)`;
+            right.addEventListener('click', () => {
+                pos = pos.map(el => el - 1 === -1 ? 2 : el - 1);
+                containers.forEach((el, idx) => {
+                    arr[idx] = arr[idx] + 120;
+                    el.style.transform =
+                        `translateZ(8000px) translateX(${pos[1]===idx ? 0 : pos[0] === idx  ? '-700px' : '700px'}) scale(${pos[1]===idx ? 1 : 0.5}) rotateY(${arr[idx]}deg)`;
+                })
+                console.log(arr)
+                console.log(pos);
             })
-            console.log(arr)
-            console.log(pos);
-        })
-    }
-        
+        }
+
+        const totalCount = document.getElementById('total');
+        const winCount = document.getElementById('win');
+        const loseCount = document.getElementById('lose');
+
+        function gameCount(gameName, result){
+            const [win, lose] = scoreInfo[gameName];
+            const total = win+lose+1;
+            if(result==='win'){
+                scoreInfo[gameName][0]=win+1;
+                winCount.style.transform=`rotateX(${(win+1)*360}deg)`
+                setTimeout(()=>{
+                    winCount.textContent = win+1;
+                },500)
+            }else{
+                scoreInfo[gameName][1]=lose+1;
+                loseCount.style.transform=`rotateX(${(lose+1)*360}deg)`
+                setTimeout(()=>{
+                    loseCount.textContent = lose+1;
+                },500)
+            }
+            
+            setTimeout(()=>{
+                totalCount.style.transform = `rotateX(${total*360}deg)`;
+                setTimeout(()=>{
+                    totalCount.textContent = total
+                },500)
+            },1000)
+        }
+
+
         //순서 맞추기 파트
         {
-            let orderStage = 1;
-            const orderStart=document.getElementById('memory_game');
+            // 기본 변수 설정 : 단계, 알림 색상, 선택 색상, 깜빡임 시간 간격
+            let orderStage = 3;
+            let infoColor = 'red';
+            let correctColor = 'lightgreen';
+            let interval = 700;
+            let begin = true;
+            let orderArray = createRandomOrder(orderStage);
+
+            //시작하기 클릭
+            const orderStart = document.getElementById('memory_game');
             const orderCover = document.getElementById('memory_cover');
-            orderStart.addEventListener("click",()=>{
-                orderCover.classList.add('memory_start');
+            const orderInnerCover = document.getElementById('memory_innerCover');
+
+            orderStart.addEventListener("click", () => {
+                orderCover.classList.add('memory_game_over');
+                setTimeout(() => {
+                    orderCover.style.display = 'none';
+                }, 1500)
+                orderInnerCover.style.display = 'block';
+                setTimeout(() => {
+                    orderInnerCover.style.display = 'none';
+                }, 1500 + interval * (orderStage < 4 ? 4 : orderStage < 9 ? 9 : 16))
+
+                makeOrderGame(orderStage, orderArray);
+                orderGameStart(orderArray);
+                console.log(orderArray);
             })
-            const orderArray = createRandomOrder(orderStage);
-            makeOrderGame(orderStage);
-            orderGameStart(orderArray);
-            function orderGameStart(orderArray){
+
+            // 순서대로 깜빡이게 하는 함수
+            function orderGameStart(orderArray) {
+                console.log('in orderGameStart', orderArray)
                 const boxes = document.querySelectorAll('.memory_box');
-                orderArray.forEach((el,idx)=>{
-                    setTimeout(()=>{
-                        boxes[el].style.background='red';
-                        
-                    },1000+idx*500)
-                    setTimeout(()=>{
-                            boxes[el].style.background='white';
-                        },1500+idx*500);
+                orderArray.forEach((el, idx) => {
+                    setTimeout(() => {
+                        boxes[el].style.background = infoColor;
+
+                    }, 1000 + idx*interval)
+                    setTimeout(() => {
+                        boxes[el].style.background = 'white';
+                    }, 1500 + idx*interval);
                 })
             }
-            function makeOrderGame(orderStage){
+            //전역변수 orderArray, orderStage 갱신
+            function updateOrderArray(arr){
+                orderArray=arr;
+            }
+            function updateOrderStage(){
+                orderStage+=1;
+            }
+            // 새 게임 생성
+            function makeOrderGame(orderStage, orderArray) {
+                console.log('in makeOrderGame', orderArray);
                 const container = document.getElementById('memory_container');
-                container.innerHTML='';
-                for(let i=0;i<orderStage+2;i++){
+                container.innerHTML = '';
+                const n = orderStage < 4 ? 2 : orderStage < 9 ? 3 : 4;
+                const input = [];
+                const memoryMsg = document.getElementById('memory_msg');
+                for (let i = 0; i < n; i++) {
                     const row = document.createElement('div');
-                    row.style.height=`${90/(orderStage+2)}%`;
+                    row.style.height = `${90/n}%`;
                     row.classList.add('memory_row');
-                    for(let j=0;j<orderStage+2;j++){
+                    for (let j = 0; j < n; j++) {
                         const box = document.createElement('div');
                         box.classList.add('memory_box');
-                        box.style.width=`${90/(orderStage+2)}%`
+                        box.style.width = `${90/n}%`
+
+                        // 사용자가 답을 맞출 때
+                        box.onclick=() => {
+                            input.push(i * n + j)
+                            console.log(input);
+                            //틀렸을 때
+                            if (!checkOrder(input, orderArray)) {
+                                console.log('when click btn', input, orderArray);
+                                document.querySelectorAll('.memory_box').forEach(el=> el.onclick=null );
+                                orderInnerCover.style.display='block'
+                                orderCover.style.display = 'flex';
+                                container.classList.add('memory_game_over')
+                                gameCount('memory','lose');
+                                setTimeout(() => {
+                                    orderCover.classList.remove('memory_game_over');
+                                    container.innerHTML = '';
+                                    orderStart.textContent = '다시하기';
+                                    orderStart.style.color = 'red';
+                                    orderCover.classList.remove('memory_start');
+                                    container.classList.remove('memory_game_over');
+                                }, 500)
+                                setTimeout(()=>{
+                                    orderInnerCover.style.display='none'
+                                },1000)
+                            }
+                            // 정답 맞췄을 때
+                            if (input.length === orderArray.length && input.map(el => el+'').join('') === orderArray.map(el => el+'').join('')) {
+                                document.querySelectorAll('.memory_box').forEach(el=> el.onclick=null );
+                                orderInnerCover.style.display='block'
+                                orderCover.style.display = 'flex';
+                                memoryMsg.textContent = `${orderStage}단계 성공!`;
+                                container.classList.add('memory_game_over')
+                                if(orderStage===10){
+                                    // 모든 스테이지 클리어
+                                }
+                                updateOrderArray(createRandomOrder(orderStage+1));
+                                updateOrderStage();
+                                setTimeout(() => {
+                                    gameCount('memory','win');
+                                    orderCover.classList.remove('memory_game_over');
+                                    orderStart.textContent = '다음 단계';
+                                    orderStart.style.color = 'white';
+                                    orderCover.classList.remove('memory_start');
+                                    container.classList.remove('memory_game_over');
+                                    makeOrderGame(orderStage+1,orderArray);
+                                    begin=false;
+                                }, 500)
+                                setTimeout(()=>{
+                                    orderInnerCover.style.display='none'
+                                },1000)
+                            }
+                            box.style.background = correctColor;
+                        }
                         row.appendChild(box);
                     }
                     container.appendChild(row);
                 }
             }
-            function createRandomOrder(stage){
-                const n = Math.pow(stage+2,2);
-                const arr = new Array(n).fill(0).map((el,idx)=>idx);
-                const result=[];
-                for(let i=0;i<n;i++){
-                    const rand = Math.floor(Math.random()*arr.length);
-                    result.push(arr.splice(rand,1)[0]);
+
+            // 사용자 입력 성공 여뷰 확인
+            function checkOrder(input, orderArray) {
+                let result = true;
+                input.forEach((el, idx) => {
+                    if (el !== orderArray[idx]) result = false;
+                })
+                return result;
+            }
+
+            // 랜덤 배열 생성  1~3단계 2x2  4~8단계 3x3 9~10단계 4x4
+            function createRandomOrder(stage) {
+                const n = stage < 4 ? 4 : stage < 9 ? 9 : 16;
+                const result = [];
+                
+                for(let i=0;i<stage+4;i++){
+                    result.push(Math.floor(Math.random()*n));
                 }
+
                 return result;
             }
         }
