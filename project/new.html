@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        body{
+            width:100vw;
+            height:100vh;
+            overflow:hidden;
+            background:linear-gradient(to bottom, #9499f4, #fcc5cb);
+            position:relative;
+        }
+        #main_cover{
+            width:900px;
+            height:700px;
+            position:absolute;
+            left:calc(50% - 450px);
+            top:calc(50% - 350px);
+            box-shadow:2px 2px 15px black;
+        }
+        #start_button{
+            width:80px;
+            height:100px;
+            background:url('./img/desk.png');
+            background-size:100% 100%;
+            position:absolute;
+            left:calc(50% - 40px);
+            top:calc(50% - 50px);
+            cursor:pointer;
+            transition:1s;
+        }
+        #start_button:hover{
+            transform:scale(2);
+        }
+    </style>
+</head>
+<body>
+    <div id="main_cover">
+        <div id="start_button"></div>
+    </div>
+</body>
+</html>
