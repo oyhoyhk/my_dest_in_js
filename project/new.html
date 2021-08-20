@@ -14,7 +14,7 @@
             width:100vw;
             height:100vh;
             overflow:hidden;
-            background:linear-gradient(to bottom, #9499f4, #fcc5cb);
+            background:#fafafa;
             position:relative;
         }
         #main_cover{
@@ -23,7 +23,8 @@
             position:absolute;
             left:calc(50% - 450px);
             top:calc(50% - 350px);
-            box-shadow:2px 2px 15px black;
+            border-radius:12px;
+            box-shadow: 0px 0px 1px rgba(20, 20, 20, 0.08), 0px 1px 8px 2px rgba(20, 20, 20, 0.08);
             transition:1s;
 
 
@@ -49,11 +50,12 @@
             position:absolute;
             left:calc(50% - 450px);
             top:calc(50% - 350px);
-            box-shadow:2px 2px 15px black;
-            background:linear-gradient(to bottom, #9499f4, #fcc5cb);
+            box-shadow: 0px 0px 1px rgba(20, 20, 20, 0.08), 0px 1px 8px 2px rgba(20, 20, 20, 0.08);
+            background:#fafafa;
             opacity:0;
             transition:1s;
             overflow:hidden;
+            border-radius:12px;
         }
         #desk{
             background:#ddb480;
@@ -75,8 +77,8 @@
             left:0;
             top:0;
             transition:1s;
-            transform:rotateZ(-25deg) translateX(1000px) translateY(-325px);
-            /* transform:rotateZ(-25deg) translateX(-100px) translateY(-325px); */
+            transform:rotateZ(-25deg) translateX(1000px) translateY(-324px);
+            /* transform:rotateZ(-25deg) translateX(-100px) translateY(-324px); */
         }
         #tablet{
             position:absolute;
@@ -138,9 +140,113 @@
         #clock:hover{
             transform:translateY(-10px) ;
         }
+        #background_cover{
+            width:100vw;
+            height:100vh;
+            background:rgba(0,0,0,.8);
+            position:absolute;
+            left:0;
+            top:0;
+            transition:1s;
+            opacity:0;
+            display:none;
+        }
+        #clock_window{
+            position:absolute;
+            width:850px;
+            height:200px;
+            background:#fafafa;
+            border:4px solid black;
+            border-radius:12px;
+            left:calc(50% - 425px);
+            display:flex;
+            top:130%;
+            /* top:calc(50% - 100px); */
+            transition:1s;
+            justify-content:space-around;
+            align-items:center;
+        }
+        #exit_clock_button{
+            width:30px;
+            height:30px;
+            border:3px solid #fafafa;
+            border-radius:12px;
+            cursor:pointer;
+            position:absolute;
+            right:20%;
+            top:14%;
+        }
+        #exit_clock_button::after{
+            width:25px;
+            height:1px;
+            border:1px solid #c4c4c4;
+            background:#c4c4c4;
+            content:'';
+            position:absolute;
+            transform:rotateZ(45deg);
+            left:5%;
+            top:47%;
+        }
+        #exit_clock_button::before{
+            width:25px;
+            height:1px;
+            border:1px solid #c4c4c4;
+            background:#c4c4c4;
+            content:'';
+            position:absolute;
+            transform:rotateZ(-45deg);
+            left:5%;
+            top:47%;
+        }
+        .clock_box{
+            background:rgb(29, 29, 29);
+            width:12%;
+            height:80%;
+            border-radius:12px;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            color:#fafafa;
+            font-size:8rem;
+            overflow:hidden;
+            backface-visibility: hidden;
+            position:relative;
+        }
+        .clock_back{
+            background:rgb(29,29,29);
+            position:absolute;
+            left:0;
+            top:0;
+            transform:rotateZ(180deg);
+            backface-visibility: hidden;
+        }
+        .clock_number{
+            position:absolute;
+            left:0;
+            top:0;
+            width:100%;
+            height:100%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            backface-visibility: hidden;
+            transform-origin:center center -100px;
+            transition:1s;
+            transform:rotateX(0);
+        }
+        .space{
+            background:#fafafa;
+            width:5%;
+            height:80%;
+            display:flex;
+            justify-content: center;
+            align-items:flex-start;
+            font-size:6rem;
+        }
     </style>
 </head>
 <body>
+    
     <div id="screen">
         <div id="wall"></div>
         <div id="desk"></div>
@@ -152,7 +258,38 @@
     <div id="main_cover">
         <div id="start_button"></div>
     </div>
+    <div id="background_cover">
+        <div id="exit_clock_button"></div>
+    </div>
+    <div id="clock_window">
+        <div class="clock_box">
+            <div class="clock_back"></div>
+             <div id="hour1" class="clock_number">4</div>
+        </div>
+        <div class="clock_box">
+            <div class="clock_back"></div>
+            <div id="hour2" class="clock_number"></div>
+        </div>
+        <div class="space">:</div>
+        <div class="clock_box">
+            <div class="clock_back"></div>
+            <div id="min1" class="clock_number"></div>
+        </div>
+        <div class="clock_box">
+            <div class="clock_back"></div>
+            <div id="min2" class="clock_number"></div>
+        </div>
+        <div class="space">:</div>
+        <div class="clock_box">
+            <div class="clock_back"></div>
+            <div id="second1" class="clock_number"></div>
+        </div>
+        <div class="clock_box">
+            <div class="clock_back"></div>
+            <div id="second2" class="clock_number"></div>
+        </div>
 
+    </div>
     <script>
         const startButton = document.getElementById('start_button');
         const mainCover = document.getElementById('main_cover');
@@ -163,13 +300,17 @@
         const clock = document.getElementById('clock');
         const note = document.getElementById('note');
         const calendar = document.getElementById('calendar');
+        const backgroundCover = document.getElementById('background_cover');
+        const exitClockButton = document.getElementById('exit_clock_button');
+
+        // 시작 인트로 부분
         startButton.addEventListener('click',()=>{
             mainCover.style.opacity=0;
             setTimeout(()=>{
                 screen.style.opacity=1;
                 mainCover.style.display='none';
                 desk.style.transform=`rotateZ(-25deg) translateX(-100px) translateY(200px)`;
-                wall.style.transform=`rotateZ(-25deg) translateX(-100px) translateY(-325px)`;
+                wall.style.transform=`rotateZ(-25deg) translateX(-100px) translateY(-324px)`;
                 setTimeout(()=>{
                     tablet.style.opacity=1;
                     calendar.style.opacity=1;
@@ -178,6 +319,89 @@
                 },1000)
             },1000)
         })
+
+        // 시계 클릭 이벤트
+
+        const clockWindow = document.getElementById('clock_window');
+        clock.addEventListener('click',()=>{
+            backgroundCover.style.display='block';
+            setTimeout(()=>{
+                backgroundCover.style.opacity=1;
+            },50)
+            clockWindow.style.top=`calc(50% - 100px)`;
+             createClock();
+
+        })
+        exitClockButton.addEventListener('click',()=>{
+            clockWindow.style.top='130%';
+            backgroundCover.style.opacity=0;
+            setTimeout(()=>{
+                backgroundCover.style.display='none';
+            },900)
+            clearInterval(clockInterval)
+        })
+        let clockInterval=null;
+        function createClock(){
+            const spaces = document.querySelectorAll('.space');
+            const date = new Date();
+            let hour =date.getUTCHours() + 9;
+            let min = date.getUTCMinutes();
+            let second = date.getUTCSeconds();
+            let moved=new Array(6).fill(false);
+
+            let clockValue = [hour >= 10 ? 1 : 0,hour%10,Math.floor(min/10),min%10,Math.floor(second/10),Math.floor(second%10)]
+            const rotateDegree = new Array(6).fill(0);
+            const clockNumbers = document.querySelectorAll('.clock_number');
+            clockNumbers.forEach((el,idx)=>{
+                el.textContent = clockValue[idx];
+            })
+
+            clockInterval=setInterval(()=>{
+                clockValue[5]+=1;
+                moved[5]=true;
+                if(clockValue[5] === 10){
+                    clockValue[5]=0;
+                    clockValue[4]+=1;
+                    moved[4]=true;
+                    if(clockValue[4] > 5){
+                        clockValue[4]=0;
+                        clockValue[3]+=1;
+                        moved[3]=true;
+                        if(clockValue[3] === 10){
+                            clockValue[3] = 0;
+                            clockValue[2]+=1;
+                            moved[2]=true;
+                            if(clockValue[2] > 5){
+                                clockValue[2] = 0;
+                                clockValue[1] += 1;
+                                moved[1]=true;
+                                if(clockValue[0] < 2 && clockValue[1] === 10){
+                                    clockValue[1]=0;
+                                    clockValue[0]+=1;
+                                    moved[0]=true;
+                                }else if(clockValue[0] === 2 && clockValue[1] ===4){
+                                    clockValue[1]=0;
+                                    clockValue[0]=0;
+                                }
+                            }
+                        }
+                    }
+                }
+                clockNumbers.forEach((el,idx)=>{
+                    if(moved[idx]){
+                        rotateDegree[idx]+=360;
+                        el.style.transform=`rotateX(${rotateDegree[idx]}deg)`;
+                    }
+                    setTimeout(()=>{
+                        el.textContent=clockValue[idx];
+                    },500)
+                })
+                console.log(moved);
+                moved=moved.map(el=>false);
+            },1000)
+            
+            
+        }
     </script>
 </body>
 </html>
