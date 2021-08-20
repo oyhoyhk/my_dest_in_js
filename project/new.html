@@ -26,6 +26,8 @@
             box-shadow:2px 2px 15px black;
             transition:1s;
 
+
+            /* display: none; */
         }
         #start_button{
             width:80px;
@@ -62,6 +64,7 @@
             top:0;
 
             transform:rotateZ(-25deg) translateX(-1300px) translateY(200px);
+            /* transform:rotateZ(-25deg) translateX(-100px) translateY(200px); */
             transition:1s;
         }
         #wall{
@@ -72,33 +75,68 @@
             left:0;
             top:0;
             transition:1s;
-            transform:rotateZ(-25deg) translateX(1000px) translateY(-300px);
+            transform:rotateZ(-25deg) translateX(1000px) translateY(-325px);
+            /* transform:rotateZ(-25deg) translateX(-100px) translateY(-325px); */
         }
-        .brick{
-            background:#fac0b2;
+        #tablet{
             position:absolute;
-            width:80px;
-            height:50px;
+            bottom:0;
+            left: 10%;
+            width:320px;
+            height:200px;
+            background:url('./img/tablet.png');
+            background-size:100% 100%;
+            transition:1s;
+            opacity:0;
+            cursor:pointer
         }
-        #brick1{
-            left:30%;
-            top:30%;
+        #clock{
+            position:absolute;
+            left:10%;
+            top:10%;
+            width:120px;
+            height:144px;
+            background:url('./img/clock.png');
+            background-size:100% 100%;
+            transition:1s;
+            opacity:0;
+            cursor:pointer
         }
-        #brick2{
-            left:25%;
-            top:42%;
+        #calendar{
+            position:absolute;
+            left:80%;
+            top:25%;
+            width:120px;
+            height:168px;
+            background:url('./img/calendar.png');
+            background-size:100% 100%;
+            transition:1s;
+            opacity:0;
+            cursor:pointer
         }
-        #brick3{
-            left:35%;
-            top:42%;
+        #note{
+            position:absolute;
+            left:50%;
+            top:50%;
+            width:240px;
+            height:150px;
+            background:url('./img/note.png');
+            background-size:100% 100%;
+            transition:1s;
+            opacity:0;
+            cursor:pointer
         }
-        #brick4{
-            left:40%;
-            top:30%;
+        #note:hover{
+            transform:translateY(-10px);
         }
-        #brick5{
-            left:45%;
-            top:42%;
+        #calendar:hover{
+            transform:translateY(-10px);
+        }
+        #tablet:hover{
+            transform:translateY(-10px);
+        }
+        #clock:hover{
+            transform:translateY(-10px) ;
         }
     </style>
 </head>
@@ -106,6 +144,10 @@
     <div id="screen">
         <div id="wall"></div>
         <div id="desk"></div>
+        <div id="tablet"></div>
+        <div id="clock"></div>
+        <div id="calendar"></div>
+        <div id="note"></div>
     </div>
     <div id="main_cover">
         <div id="start_button"></div>
@@ -117,13 +159,23 @@
         const screen = document.getElementById('screen');
         const desk = document.getElementById('desk');
         const wall = document.getElementById('wall');
+        const tablet = document.getElementById('tablet');
+        const clock = document.getElementById('clock');
+        const note = document.getElementById('note');
+        const calendar = document.getElementById('calendar');
         startButton.addEventListener('click',()=>{
             mainCover.style.opacity=0;
             setTimeout(()=>{
                 screen.style.opacity=1;
-            desk.style.transform=`rotateZ(-25deg) translateX(-100px) translateY(200px)`;
-            wall.style.transform=`rotateZ(-25deg) translateX(-100px) translateY(-300px)`;
-
+                mainCover.style.display='none';
+                desk.style.transform=`rotateZ(-25deg) translateX(-100px) translateY(200px)`;
+                wall.style.transform=`rotateZ(-25deg) translateX(-100px) translateY(-325px)`;
+                setTimeout(()=>{
+                    tablet.style.opacity=1;
+                    calendar.style.opacity=1;
+                    note.style.opacity=1;
+                    clock.style.opacity=1;
+                },1000)
             },1000)
         })
     </script>
