@@ -1,252 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Demo</title>
-    <style>
-        *{
-            margin:0;
-            padding:0;
-        }
-        body{
-            width:100vw;
-            height:100vh;
-            overflow:hidden;
-            background:#fafafa;
-            position:relative;
-        }
-        #main_cover{
-            width:900px;
-            height:700px;
-            position:absolute;
-            left:calc(50% - 450px);
-            top:calc(50% - 350px);
-            border-radius:12px;
-            box-shadow: 0px 0px 1px rgba(20, 20, 20, 0.08), 0px 1px 8px 2px rgba(20, 20, 20, 0.08);
-            transition:1s;
-
-
-            /* display: none; */
-        }
-        #start_button{
-            width:80px;
-            height:100px;
-            background:url('./img/desk.png');
-            background-size:100% 100%;
-            position:absolute;
-            left:calc(50% - 40px);
-            top:calc(50% - 50px);
-            cursor:pointer;
-            transition:1s;
-        }
-        #start_button:hover{
-            transform:scale(2);
-        }
-        #screen{
-            width:900px;
-            height:700px;
-            position:absolute;
-            left:calc(50% - 450px);
-            top:calc(50% - 350px);
-            box-shadow: 0px 0px 1px rgba(20, 20, 20, 0.08), 0px 1px 8px 2px rgba(20, 20, 20, 0.08);
-            background:#fafafa;
-            opacity:0;
-            transition:1s;
-            overflow:hidden;
-            border-radius:12px;
-        }
-        #desk{
-            background:#ddb480;
-            width:1200px;
-            height:1000px;
-            position:absolute;
-            left:0;
-            top:0;
-
-            transform:rotateZ(-25deg) translateX(-1300px) translateY(200px);
-            /* transform:rotateZ(-25deg) translateX(-100px) translateY(200px); */
-            transition:1s;
-        }
-        #wall{
-            background:hsl(216, 89%, 76%);
-            width:1200px;
-            height:500px;
-            position:absolute;
-            left:0;
-            top:0;
-            transition:1s;
-            transform:rotateZ(-25deg) translateX(1000px) translateY(-324px);
-            /* transform:rotateZ(-25deg) translateX(-100px) translateY(-324px); */
-        }
-        #tablet{
-            position:absolute;
-            bottom:0;
-            left: 10%;
-            width:320px;
-            height:200px;
-            background:url('./img/tablet.png');
-            background-size:100% 100%;
-            transition:1s;
-            opacity:0;
-            cursor:pointer
-        }
-        #clock{
-            position:absolute;
-            left:10%;
-            top:10%;
-            width:120px;
-            height:144px;
-            background:url('./img/clock.png');
-            background-size:100% 100%;
-            transition:1s;
-            opacity:0;
-            cursor:pointer
-        }
-        #calendar{
-            position:absolute;
-            left:80%;
-            top:25%;
-            width:120px;
-            height:168px;
-            background:url('./img/calendar.png');
-            background-size:100% 100%;
-            transition:1s;
-            opacity:0;
-            cursor:pointer
-        }
-        #note{
-            position:absolute;
-            left:50%;
-            top:50%;
-            width:240px;
-            height:150px;
-            background:url('./img/note.png');
-            background-size:100% 100%;
-            transition:1s;
-            opacity:0;
-            cursor:pointer
-        }
-        #note:hover{
-            transform:translateY(-10px);
-        }
-        #calendar:hover{
-            transform:translateY(-10px);
-        }
-        #tablet:hover{
-            transform:translateY(-10px);
-        }
-        #clock:hover{
-            transform:translateY(-10px) ;
-        }
-        #background_cover{
-            width:100vw;
-            height:100vh;
-            background:rgba(0,0,0,.8);
-            position:absolute;
-            left:0;
-            top:0;
-            transition:1s;
-            opacity:0;
-            display:none;
-        }
-        #clock_window{
-            position:absolute;
-            width:850px;
-            height:200px;
-            background:#fafafa;
-            border:4px solid black;
-            border-radius:12px;
-            left:calc(50% - 425px);
-            display:flex;
-            top:130%;
-            /* top:calc(50% - 100px); */
-            transition:1s;
-            justify-content:space-around;
-            align-items:center;
-        }
-        #exit_clock_button{
-            width:30px;
-            height:30px;
-            border:3px solid #fafafa;
-            border-radius:12px;
-            cursor:pointer;
-            position:absolute;
-            right:20%;
-            top:14%;
-        }
-        #exit_clock_button::after{
-            width:25px;
-            height:1px;
-            border:1px solid #c4c4c4;
-            background:#c4c4c4;
-            content:'';
-            position:absolute;
-            transform:rotateZ(45deg);
-            left:5%;
-            top:47%;
-        }
-        #exit_clock_button::before{
-            width:25px;
-            height:1px;
-            border:1px solid #c4c4c4;
-            background:#c4c4c4;
-            content:'';
-            position:absolute;
-            transform:rotateZ(-45deg);
-            left:5%;
-            top:47%;
-        }
-        .clock_box{
-            background:rgb(29, 29, 29);
-            width:12%;
-            height:80%;
-            border-radius:12px;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            color:#fafafa;
-            font-size:8rem;
-            overflow:hidden;
-            backface-visibility: hidden;
-            position:relative;
-        }
-        .clock_back{
-            background:rgb(29,29,29);
-            position:absolute;
-            left:0;
-            top:0;
-            transform:rotateZ(180deg);
-            backface-visibility: hidden;
-        }
-        .clock_number{
-            position:absolute;
-            left:0;
-            top:0;
-            width:100%;
-            height:100%;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            backface-visibility: hidden;
-            transform-origin:center center -100px;
-            transition:1s;
-            transform:rotateX(0);
-        }
-        .space{
-            background:#fafafa;
-            width:5%;
-            height:80%;
-            display:flex;
-            justify-content: center;
-            align-items:flex-start;
-            font-size:6rem;
-        }
-    </style>
+    <link rel="stylesheet" href="./new.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    
+
     <div id="screen">
         <div id="wall"></div>
         <div id="desk"></div>
@@ -260,11 +27,12 @@
     </div>
     <div id="background_cover">
         <div id="exit_clock_button"></div>
+        <div id="exit_calendar_button"></div>
     </div>
     <div id="clock_window">
         <div class="clock_box">
             <div class="clock_back"></div>
-             <div id="hour1" class="clock_number">4</div>
+            <div id="hour1" class="clock_number">4</div>
         </div>
         <div class="clock_box">
             <div class="clock_back"></div>
@@ -288,7 +56,51 @@
             <div class="clock_back"></div>
             <div id="second2" class="clock_number"></div>
         </div>
+    </div>
 
+    <div id="calendar_window">
+        <div id="calendar_left">
+            <div id="calendar_detail_date">23</div>
+            <div id="calendar_detail_day">Monday</div>
+            <div id="calendar_detail_todos">
+                <div id="calendar_todos">오늘의 할일</div>
+                <div id="calendar_todo_lists">할 일을 등록해 주세요</div>
+                <div id="calendar_todo_input_container">
+                    <input type="text" id="todo_input" placeholder="할 일을 입력해주세요">
+                    <div id="todo_submit_button"></div>
+                </div>
+            </div>
+        </div>
+        <div id="calendar_right">
+            <div id="calendar_upper">
+                <div id="calendar_past_button"></div>
+                <div id="calendar_post_button"></div>
+                <div id="calendar_month">August</div>
+                <div id="calendar_year">2021</div>
+            </div>
+            <div id="calendar_below">
+                <div id="calendar_container_day">
+                    <div id="calendar_today_button">TODAY</div>
+                    <div class="calendar_day sun">Sun</div>
+                    <div class="calendar_day">Mon</div>
+                    <div class="calendar_day">Tue</div>
+                    <div class="calendar_day">Wed</div>
+                    <div class="calendar_day">Thu</div>
+                    <div class="calendar_day">Fri</div>
+                    <div class="calendar_day sat">Sat</div>
+                </div>
+                <div id="calendar_container">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="alert_cover">
+        <div id="alert_window">
+            <div id="alert_image"></div>
+            <div id="alert_message">등록 실패</div>
+            <div id="alert_detail">이미 지난 날엔 목표를 세울 수 없습니다</div>
+            <input type="submit" id="alert_confirm" value="확인">
+        </div>
     </div>
     <script>
         const startButton = document.getElementById('start_button');
@@ -302,106 +114,391 @@
         const calendar = document.getElementById('calendar');
         const backgroundCover = document.getElementById('background_cover');
         const exitClockButton = document.getElementById('exit_clock_button');
+        const exitCalendarButton = document.getElementById('exit_calendar_button');
 
         // 시작 인트로 부분
-        startButton.addEventListener('click',()=>{
-            mainCover.style.opacity=0;
-            setTimeout(()=>{
-                screen.style.opacity=1;
-                mainCover.style.display='none';
-                desk.style.transform=`rotateZ(-25deg) translateX(-100px) translateY(200px)`;
-                wall.style.transform=`rotateZ(-25deg) translateX(-100px) translateY(-324px)`;
-                setTimeout(()=>{
-                    tablet.style.opacity=1;
-                    calendar.style.opacity=1;
-                    note.style.opacity=1;
-                    clock.style.opacity=1;
-                },1000)
-            },1000)
+        startButton.addEventListener('click', () => {
+            mainCover.style.opacity = 0;
+            setTimeout(() => {
+                screen.style.opacity = 1;
+                mainCover.style.display = 'none';
+                desk.style.transform = `rotateZ(-25deg) translateX(-100px) translateY(200px)`;
+                wall.style.transform = `rotateZ(-25deg) translateX(-100px) translateY(-324px)`;
+                setTimeout(() => {
+                    tablet.style.opacity = 1;
+                    calendar.style.opacity = 1;
+                    note.style.opacity = 1;
+                    clock.style.opacity = 1;
+                }, 1000)
+            }, 1000)
         })
 
-        // 시계 클릭 이벤트
-
-        const clockWindow = document.getElementById('clock_window');
-        clock.addEventListener('click',()=>{
-            backgroundCover.style.display='block';
-            setTimeout(()=>{
-                backgroundCover.style.opacity=1;
-            },50)
-            clockWindow.style.top=`calc(50% - 100px)`;
-             createClock();
-
+        // 달력 클릭 이벤트
+        const calendarWindow = document.getElementById('calendar_window');
+        calendar.addEventListener('click', () => {
+            backgroundCover.style.display = 'block';
+            setTimeout(() => {
+                backgroundCover.style.opacity = 1;
+            }, 50);
+            calendarWindow.style.top = `calc(50% - 250px)`;
+            exitCalendarButton.style.display = 'block'
         })
-        exitClockButton.addEventListener('click',()=>{
-            clockWindow.style.top='130%';
-            backgroundCover.style.opacity=0;
-            setTimeout(()=>{
-                backgroundCover.style.display='none';
-            },900)
-            clearInterval(clockInterval)
-        })
-        let clockInterval=null;
-        function createClock(){
-            const spaces = document.querySelectorAll('.space');
-            const date = new Date();
-            let hour =date.getUTCHours() + 9;
-            let min = date.getUTCMinutes();
-            let second = date.getUTCSeconds();
-            let moved=new Array(6).fill(false);
 
-            let clockValue = [hour >= 10 ? 1 : 0,hour%10,Math.floor(min/10),min%10,Math.floor(second/10),Math.floor(second%10)]
-            const rotateDegree = new Array(6).fill(0);
-            const clockNumbers = document.querySelectorAll('.clock_number');
-            clockNumbers.forEach((el,idx)=>{
-                el.textContent = clockValue[idx];
+        exitCalendarButton.addEventListener('click', () => {
+            calendarWindow.style.top = '130%';
+            exitCalendarButton.style.display = 'none'
+            backgroundCover.style.opacity = 0;
+            setTimeout(() => {
+                backgroundCover.style.display = 'none';
+            }, 900)
+        })
+
+        let currentDate = new Date();
+
+        const monthValue = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const dayValue = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        const today = [currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate()]
+        let chosenDate = [...today];
+
+        createCalendar(currentDate);
+        const postButton = document.getElementById('calendar_post_button');
+        const pastButton = document.getElementById('calendar_past_button');
+        const todoInputButton = document.getElementById('todo_submit_button');
+        const todoTextInput = document.getElementById('todo_input');
+        const alertConfirm = document.getElementById('alert_confirm');
+        const alertKeyInput = document.getElementById('alert_key_input');
+        todoInputButton.addEventListener('click', () => {
+            saveTodoInLocalStorage(today, chosenDate, todoTextInput.value);
+            createCalendar(currentDate);
+        })
+        todoTextInput.addEventListener('keypress', e =>{
+            if(e.key ==='Enter'){
+                saveTodoInLocalStorage(today, chosenDate, todoTextInput.value);
+                createCalendar(currentDate);
+            }
+        })
+
+        alertConfirm.addEventListener('click', alertWindowOff);
+
+        postButton.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            createCalendar(currentDate);
+        })
+        pastButton.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            createCalendar(currentDate);
+        })
+
+        const todayButton = document.getElementById('calendar_today_button');
+        todayButton.addEventListener('click', () => {
+            currentDate = new Date();
+            createCalendar(currentDate);
+        })
+
+        function createCalendar(date) {
+            const copyDate = new Date(date);
+            const calendarMonth = document.getElementById('calendar_month');
+            const calendarYear = document.getElementById('calendar_year');
+            const calendarContainer = document.getElementById('calendar_container');
+            const calendarDetailDate = document.getElementById('calendar_detail_date');
+            const calendarDetailDay = document.getElementById('calendar_detail_day');
+
+            calendarMonth.textContent = monthValue[date.getMonth()];
+            calendarYear.textContent = date.getFullYear();
+
+            copyDate.setDate(1);
+
+            const rowLength = Math.ceil((getMonthLength(copyDate) + copyDate.getDay()) / 7);
+            let dateInfo = new Array(getMonthLength(copyDate)).fill(0).map((el, idx) => idx + 1)
+            dateInfo = getPastMonthDays(copyDate).concat(dateInfo);
+            dateInfo = dateInfo.concat(new Array(rowLength * 7 - dateInfo.length).fill(0).map((el, idx) => idx + 1))
+            copyDate.setDate(currentDate.getDate());
+            calendarDetailDate.textContent = copyDate.getDate();
+            calendarDetailDay.textContent = dayValue[copyDate.getDay()];
+            let dateString = copyDate.getFullYear()+'.'+(copyDate.getMonth()+1)+'.'+copyDate.getDate();
+            if(localStorage[dateString]){
+                createTodoList(localStorage[dateString]);
+            }else{
+                createTodoList();
+            }
+            let todoDays=[];
+            let currentMonthInfo=`${currentDate.getFullYear()}.${currentDate.getMonth()+1}`;
+            for(let day in localStorage){
+                if(day.includes(currentMonthInfo)){
+                    todoDays.push(day.split('.')[2])
+                }
+            }
+            calendarContainer.innerHTML = '';
+
+            for (let i = 0; i < rowLength; i++) {
+                const dates = dateInfo.splice(0, 7);
+                const row = document.createElement('div');
+                row.classList.add('calendar_row');
+                row.style.height = `${(90/rowLength)}%`;
+                for (let j = 0; j < 7; j++) {
+                    const date = document.createElement('div');
+                    date.classList.add('calendar_date');
+                    if (j === 0) {
+                        date.classList.add('sun');
+                    }
+                    if (j === 6) {
+                        date.classList.add('sat');
+                    }
+                    if (i === 0 && dates[j] > 10) {
+                        date.classList.add('past');
+                    } else if (i === rowLength - 1 && dates[j] < 10) {
+                        date.classList.add('post');
+                    } else {
+                        date.classList.add('current');
+                    }
+                    date.textContent = dates[j];
+
+                    row.appendChild(date);
+                }
+                calendarContainer.appendChild(row);
+            }
+            let postDays = document.querySelectorAll('.post');
+            let pastDays = document.querySelectorAll('.past');
+            let currentDays = document.querySelectorAll('.current');
+            if (date.getFullYear() === today[0] && date.getMonth() === today[1] - 1) {
+                Array.from(currentDays).filter(el => el.textContent == today[2])[0].classList.add('today')
+            }
+
+            postDays.forEach(el => {
+                el.addEventListener('click', () => {
+                    date.setMonth(date.getMonth() + 1)
+                    createCalendar(date);
+                })
             })
 
-            clockInterval=setInterval(()=>{
-                clockValue[5]+=1;
-                moved[5]=true;
-                if(clockValue[5] === 10){
-                    clockValue[5]=0;
-                    clockValue[4]+=1;
-                    moved[4]=true;
-                    if(clockValue[4] > 5){
-                        clockValue[4]=0;
-                        clockValue[3]+=1;
-                        moved[3]=true;
-                        if(clockValue[3] === 10){
-                            clockValue[3] = 0;
-                            clockValue[2]+=1;
-                            moved[2]=true;
-                            if(clockValue[2] > 5){
-                                clockValue[2] = 0;
-                                clockValue[1] += 1;
-                                moved[1]=true;
-                                if(clockValue[0] < 2 && clockValue[1] === 10){
-                                    clockValue[1]=0;
-                                    clockValue[0]+=1;
-                                    moved[0]=true;
-                                }else if(clockValue[0] === 2 && clockValue[1] ===4){
-                                    clockValue[1]=0;
-                                    clockValue[0]=0;
+            pastDays.forEach(el => {
+                el.addEventListener('click', () => {
+                    date.setMonth(date.getMonth() - 1)
+                    createCalendar(date);
+                })
+            })
+            currentDays.forEach(el => {
+                if(todoDays.includes(el.textContent)){
+                    const point = document.createElement('div');
+                    point.classList.add('todo');
+                    el.appendChild(point);
+                }
+                el.addEventListener('click', () => {
+                    calendarDetailDate.textContent = el.textContent;
+                    date.setDate(el.textContent)
+                    calendarDetailDay.textContent = dayValue[date.getDay()]
+                    chosenDate = [currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate
+                        .getDate()
+                    ];
+                    if (localStorage[chosenDate.join('.')]) {
+                        createTodoList(localStorage[chosenDate.join('.')])
+                    }else{
+                        createTodoList();
+                    }
+                })
+            })
+        }
+
+        function createTodoList(data) {
+            const todoContainer = document.getElementById('calendar_todo_lists');
+            todoContainer.innerHTML = '';
+            if(!data){
+                todoContainer.textContent='할 일을 입력해주세요';
+                return;
+            }
+            const todos = data.split('---').map(el => el.split('___')[0]);
+            todos.forEach(el => {
+                const todo = document.createElement('div');
+                
+                todo.classList.add('calendar_todo');
+                
+                const todoText = document.createElement('div');
+                todoText.classList.add('calendar_todo_text');
+                todoText.textContent = '⚬ '+ el;
+
+                const todoDeleteButton = document.createElement('div');
+                todoDeleteButton.classList.add('calendar_todo_delete');
+
+                todoDeleteButton.addEventListener('click',()=>{
+                    const dateInfo=`${currentDate.getFullYear()}.${currentDate.getMonth()+1}.${currentDate.getDate()}`;
+                    localStorage[dateInfo] = localStorage[dateInfo].split('---').filter(element=>!element.includes(el)).join('---');
+                    if(localStorage[dateInfo].length===0){
+                        localStorage.removeItem(dateInfo);
+                        createCalendar(currentDate);
+                        return;
+                    }
+                    createTodoList(localStorage[dateInfo]);
+                })
+
+                todo.appendChild(todoText);
+                todo.appendChild(todoDeleteButton);
+
+                todoContainer.appendChild(todo);
+            })
+        }
+
+        function saveTodoInLocalStorage(today, chosenDate, data) {
+            const dateInfo = chosenDate.join('.')
+            if (new Date(today).valueOf() <= new Date(chosenDate).valueOf()) {
+                if (data.trim().length === 0) {
+                    loadAlertWindow(false, '내용을 입력해주세요');
+                    return;
+                }
+                loadAlertWindow(true, `${chosenDate[0]%100}년 ${chosenDate[1]}월 ${chosenDate[2]}일에 할일이 등록 되었습니다.`);
+                if (localStorage[dateInfo]) { // 각 todo는 --- 로 구분
+                    localStorage.setItem(dateInfo, localStorage.getItem(dateInfo) + '---' + data + '___');
+                } else {
+                    localStorage.setItem(dateInfo, data + '___') // todo 제목과 내용을 _ x 3으로 구분
+                }
+            } else {
+                loadAlertWindow(false, '이미 지난 날엔 계획을 세울 수 없습니다');
+            }
+        }
+
+        function alertWindowOff() {
+            document.getElementById('alert_window').classList.remove('alert_window_on');
+            document.getElementById('todo_input').value = '';
+            const alertCover = document.getElementById('alert_cover');
+            alertCover.style.opacity = 0;
+            setTimeout(() => {
+                alertCover.style.display = 'none';
+            }, 500)
+        }
+
+        function loadAlertWindow(result, msg) {
+            const alertCover = document.getElementById('alert_cover');
+            const alertWindow = document.getElementById('alert_window');
+            const alertImage = document.getElementById('alert_image');
+            const alertMessage = document.getElementById('alert_message');
+            const alertDetail = document.getElementById('alert_detail');
+            const alertConfirm = document.getElementById('alert_confirm');
+
+            alertCover.style.display = 'block';
+            if (result) {
+                alertImage.style.backgroundImage = `url('./img/success.png')`;
+                alertMessage.textContent = '등록 성공';
+                alertMessage.style.color = '#527aff'
+                alertDetail.textContent = msg;
+                alertConfirm.style.color = '#527aff';
+                alertConfirm.style.border = '2px solid #527aff';
+            } else {
+                alertImage.style.backgroundImage = `url('./img/alert.png')`;
+                alertMessage.textContent = '등록 실패';
+                alertMessage.style.color = '#ff7300'
+                alertDetail.textContent = msg;
+                alertConfirm.style.color = '#ff7300';
+                alertConfirm.style.border = '2px solid #ff7300';
+            }
+            setTimeout(() => {
+                alertCover.style.opacity = 1;
+                alertWindow.classList.add('alert_window_on')
+            }, 50)
+        }
+
+
+        function getPastMonthDays(date) {
+            let tempDate = new Date(date);
+            let num = tempDate.getDay();
+            tempDate.setDate(tempDate.getDate() - num - 1)
+            let res = [];
+            for (let i = 0; i < num; i++) {
+                tempDate.setDate(tempDate.getDate() + 1)
+                res.push(tempDate.getDate());
+            }
+            return res;
+        }
+
+        function getMonthLength(date) {
+            let last = new Date(date);
+            last.setMonth(last.getMonth() + 1);
+            last.setDate(0);
+            return last.getDate();
+        }
+
+        // 시계 클릭 이벤트
+        {
+            const clockWindow = document.getElementById('clock_window');
+            clock.addEventListener('click', () => {
+                backgroundCover.style.display = 'block';
+                setTimeout(() => {
+                    backgroundCover.style.opacity = 1;
+                }, 50)
+                clockWindow.style.top = `calc(50% - 100px)`;
+                createClock();
+                exitClockButton.style.display = 'block'
+            })
+            exitClockButton.addEventListener('click', () => {
+                clockWindow.style.top = '130%';
+                exitClockButton.style.display = 'none'
+                backgroundCover.style.opacity = 0;
+                setTimeout(() => {
+                    backgroundCover.style.display = 'none';
+                }, 900)
+                clearInterval(clockInterval)
+            })
+            let clockInterval = null;
+
+            function createClock() {
+                const spaces = document.querySelectorAll('.space');
+                const date = new Date();
+                let hour = (date.getUTCHours() + 9) % 24;
+                let min = date.getUTCMinutes();
+                let second = date.getUTCSeconds();
+                let moved = new Array(6).fill(false);
+
+                let clockValue = [hour >= 10 ? 1 : 0, hour % 10, Math.floor(min / 10), min % 10, Math.floor(second /
+                    10), Math.floor(second % 10)]
+                const rotateDegree = new Array(6).fill(0);
+                const clockNumbers = document.querySelectorAll('.clock_number');
+                clockNumbers.forEach((el, idx) => {
+                    el.textContent = clockValue[idx];
+                })
+
+                clockInterval = setInterval(() => {
+                    clockValue[5] += 1;
+                    moved[5] = true;
+                    if (clockValue[5] === 10) {
+                        clockValue[5] = 0;
+                        clockValue[4] += 1;
+                        moved[4] = true;
+                        if (clockValue[4] > 5) {
+                            clockValue[4] = 0;
+                            clockValue[3] += 1;
+                            moved[3] = true;
+                            if (clockValue[3] === 10) {
+                                clockValue[3] = 0;
+                                clockValue[2] += 1;
+                                moved[2] = true;
+                                if (clockValue[2] > 5) {
+                                    clockValue[2] = 0;
+                                    clockValue[1] += 1;
+                                    moved[1] = true;
+                                    if (clockValue[0] < 2 && clockValue[1] === 10) {
+                                        clockValue[1] = 0;
+                                        clockValue[0] += 1;
+                                        moved[0] = true;
+                                    } else if (clockValue[0] === 2 && clockValue[1] === 4) {
+                                        clockValue[1] = 0;
+                                        clockValue[0] = 0;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                clockNumbers.forEach((el,idx)=>{
-                    if(moved[idx]){
-                        rotateDegree[idx]+=360;
-                        el.style.transform=`rotateX(${rotateDegree[idx]}deg)`;
-                    }
-                    setTimeout(()=>{
-                        el.textContent=clockValue[idx];
-                    },500)
-                })
-                console.log(moved);
-                moved=moved.map(el=>false);
-            },1000)
-            
-            
+                    clockNumbers.forEach((el, idx) => {
+                        if (moved[idx]) {
+                            rotateDegree[idx] += 360;
+                            el.style.transform = `rotateX(${rotateDegree[idx]}deg)`;
+                        }
+                        setTimeout(() => {
+                            el.textContent = clockValue[idx];
+                        }, 500)
+                    })
+                    moved = moved.map(el => false);
+                }, 1000)
+            }
         }
     </script>
 </body>
+
 </html>
