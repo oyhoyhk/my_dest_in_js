@@ -260,6 +260,7 @@
             let postDays = document.querySelectorAll('.post');
             let pastDays = document.querySelectorAll('.past');
             let currentDays = document.querySelectorAll('.current');
+            let clickedDay = null;
             if (date.getFullYear() === today[0] && date.getMonth() === today[1] - 1) {
                 Array.from(currentDays).filter(el => el.textContent == today[2])[0].classList.add('today')
             }
@@ -284,6 +285,11 @@
                     el.appendChild(point);
                 }
                 el.addEventListener('click', () => {
+                    if(clickedDay){
+                        clickedDay.classList.remove('calendar_clicked');
+                    }
+                    clickedDay= el;
+                    el.classList.add('calendar_clicked');
                     calendarDetailDate.textContent = el.textContent;
                     date.setDate(el.textContent)
                     calendarDetailDay.textContent = dayValue[date.getDay()]
@@ -314,7 +320,7 @@
                 
                 const todoText = document.createElement('div');
                 todoText.classList.add('calendar_todo_text');
-                todoText.textContent = '⚬ '+ el;
+                todoText.textContent = el.length > 15 ? '⚬ '+ el.slice(0,15)+'...' : '⚬ '+el;
 
                 const todoDeleteButton = document.createElement('div');
                 todoDeleteButton.classList.add('calendar_todo_delete');
@@ -342,6 +348,11 @@
             if (new Date(today).valueOf() <= new Date(chosenDate).valueOf()) {
                 if (data.trim().length === 0) {
                     loadAlertWindow(false, '내용을 입력해주세요');
+                    return;
+                }
+                console.log(data, localStorage[dateInfo])
+                if(localStorage[dateInfo] && localStorage[dateInfo].split('---').map(el=>el.split('___')[0]).includes(data)){
+                    loadAlertWindow(false, '이미 등록이 되어 있습니다');
                     return;
                 }
                 loadAlertWindow(true, `${chosenDate[0]%100}년 ${chosenDate[1]}월 ${chosenDate[2]}일에 할일이 등록 되었습니다.`);
@@ -446,7 +457,7 @@
                 let second = date.getUTCSeconds();
                 let moved = new Array(6).fill(false);
 
-                let clockValue = [hour >= 10 ? 1 : 0, hour % 10, Math.floor(min / 10), min % 10, Math.floor(second /
+                let clockValue = [hour >= 10 ? Math.floor(hour/10) : 0, hour % 10, Math.floor(min / 10), min % 10, Math.floor(second /
                     10), Math.floor(second % 10)]
                 const rotateDegree = new Array(6).fill(0);
                 const clockNumbers = document.querySelectorAll('.clock_number');
@@ -495,6 +506,7 @@
                         }, 500)
                     })
                     moved = moved.map(el => false);
+                    console.log(clockValue);
                 }, 1000)
             }
         }
