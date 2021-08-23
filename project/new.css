@@ -340,6 +340,7 @@ body{
     background-image:url('./img/delete.png');
     background-size: 100% 100%;
     cursor:pointer;
+    margin-right:10px;
 }
 #calendar_todo_lists{
     width:100%;
@@ -353,6 +354,17 @@ body{
     flex-direction:column;
     justify-content: flex-start;
     align-items:flex-start;
+}
+#calendar_todo_lists::-webkit-scrollbar{
+    width:3px;
+}
+#calendar_todo_lists::-webkit-scrollbar-thumb{
+    background-color:hsl(226, 100%, 75%);
+}
+#calendar_todo_lists::-webkit-scrollbar-track{
+    background-color:#043eff;
+    border-radius:5px;
+    box-shadow:inset 0px 0px 5px white;
 }
 
 #calendar_todo_input_container{
@@ -497,6 +509,9 @@ body{
     box-sizing: border-box;
     position:relative;
     border:2px solid white;
+}
+.calendar_clicked{
+    border:2px solid #fa6f6f !important;
 }
 .todo{
     width:7px;
