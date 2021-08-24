@@ -45,7 +45,7 @@ body{
     box-shadow: 0px 0px 1px rgba(20, 20, 20, 0.08), 0px 1px 8px 2px rgba(20, 20, 20, 0.08);
     background:#fafafa;
     opacity:0;
-    opacity:1;
+    /* opacity:1; */
     transition:1s;
     overflow:hidden;
     border-radius:12px;
@@ -58,8 +58,8 @@ body{
     left:0;
     top:0;
 
-    transform:rotateZ(-25deg) translateX(-1300px) translateY(200px);
-    /* transform:rotateZ(-25deg) translateX(-100px) translateY(200px); */
+    /* transform:rotateZ(-25deg) translateX(-1300px) translateY(200px); */
+    transform:rotateZ(-25deg) translateX(-100px) translateY(200px);
     transition:1s;
 }
 #wall{
@@ -70,8 +70,8 @@ body{
     left:0;
     top:0;
     transition:1s;
-    transform:rotateZ(-25deg) translateX(1000px) translateY(-324px);
-    /* transform:rotateZ(-25deg) translateX(-100px) translateY(-324px); */
+    /* transform:rotateZ(-25deg) translateX(1000px) translateY(-324px); */
+    transform:rotateZ(-25deg) translateX(-100px) translateY(-324px);
 }
 #tablet{
     position:absolute;
@@ -82,7 +82,7 @@ body{
     background:url('./img/tablet.png');
     background-size:100% 100%;
     transition:1s;
-    opacity:0;
+    /* opacity:0; */
     cursor:pointer
 }
 #clock{
@@ -94,7 +94,7 @@ body{
     background:url('./img/clock.png');
     background-size:100% 100%;
     transition:1s;
-    opacity:0;
+    /* opacity:0; */
     cursor:pointer
 }
 #calendar{
@@ -106,7 +106,7 @@ body{
     background:url('./img/calendar.png');
     background-size:100% 100%;
     transition:1s;
-    opacity:0;
+    /* opacity:0; */
     cursor:pointer
 }
 #note{
@@ -118,7 +118,7 @@ body{
     background:url('./img/note.png');
     background-size:100% 100%;
     transition:1s;
-    opacity:0;
+    /* opacity:0; */
     cursor:pointer
 }
 #note:hover{
@@ -160,6 +160,7 @@ body{
     transition:1s;
     justify-content:space-around;
     align-items:center;
+    font-family:'pretendard';
 }
 #exit_clock_button{
     width:30px;
@@ -596,3 +597,186 @@ body{
     align-items:center;
 }
 
+
+#exit_tablet_button{
+    width:30px;
+    height:30px;
+    border:3px solid #fafafa;
+    border-radius:12px;
+    cursor:pointer;
+    position:absolute;
+    right:15%;
+    top:10%;
+    display:none;
+}
+#exit_tablet_button::after{
+    width:25px;
+    height:1px;
+    border:1px solid #c4c4c4;
+    background:#c4c4c4;
+    content:'';
+    position:absolute;
+    transform:rotateZ(45deg);
+    left:5%;
+    top:47%;
+}
+#exit_tablet_button::before{
+    width:25px;
+    height:1px;
+    border:1px solid #c4c4c4;
+    background:#c4c4c4;
+    content:'';
+    position:absolute;
+    transform:rotateZ(-45deg);
+    left:5%;
+    top:47%;
+}
+
+#tablet_window{
+    width:900px;
+    height:600px;
+    background:rgba(0,0,0.6);
+    position:absolute;
+    left:calc(50% - 500px);
+    top:130%;
+    /* top:calc(50% - 300px); */
+    border:2rem solid #fafafa;
+    border-right:4.5rem solid #fafafa;
+    box-sizing:content-box;
+    border-radius:2rem;
+    transition:1s;
+}
+
+#tablet_home_button{
+    width:50px;
+    height:50px;
+    position:absolute;
+    right:-60px;
+    top:calc(50% - 25px);
+    border-radius:100%;
+    border:2px solid gray;
+    cursor:pointer;
+}
+#tablet_camera{
+    width:10px;
+    height:10px;
+    position:absolute;
+    top:calc(50% - 25px);
+    left:-20px;
+    border-radius:100%;
+    background:black;
+    
+}
+
+#tablet_status_bar{
+    width:100%;
+    height:20px;
+    background:rgba(0,0,0,.6);
+    position:absolute;
+    left:0;
+    top:0;
+    font-family:'Noto Sans KR', sans-serif;
+    font-size:.8rem;
+    display:flex;
+    justify-content:space-between;
+    color:#c7c7c7;
+    transition:.5s;
+    opacity:0;
+}
+#status_time{
+    margin-left:10px;
+}
+#status_icons{
+    margin-right:10px;
+    width:100px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+#status_wifi{
+    width:18px;
+    height:14px;
+    background-image:url('./img/wifi.png');
+    background-size:100% 100%;
+}
+#status_battery{
+    width:30px;
+    height:100%;
+    background-image:url('./img/battery.png');
+    background-size: 100% 100%;
+}
+#tablet_screen{
+    width:100%;
+    height:100%;
+    background-image:url('./img/tablet_background.jpg');
+    background-size: 100% 100%;
+    transition:.5s;
+    position:relative;
+    opacity:0;
+    filter:blur(3rem);
+}
+
+.tablet_icon{
+    width:90px;
+    height:90px;
+    position:absolute;
+   
+    cursor:pointer;
+}
+#card_game{
+    left:0;
+    top:20px;
+}
+#order_game{
+    left:0;
+    top:130px;
+}
+#tictactoe_game{
+    left:0;
+    top:240px;
+}
+.icon_clicked_cover{
+    width:100%;
+    height:100%;
+    position:absolute;
+    left:0;
+    top:0;
+    background:#2568ac;
+    opacity:0;
+}
+.icon_clicked{
+    opacity:.5 !important;
+}
+.icon_image_container{
+    width:100%;
+    height:80%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+#card_image{
+    width:80%;
+    height:90%;
+    background-image:url('./img/card.png');
+    background-size:100% 100%;
+}
+#order_image{
+    width:60%;
+    height:60%;
+    background-image:url('./img/order.png');
+    background-size:100% 100%;
+}
+#tictactoe_image{
+    width:60%;
+    height:40%;
+    background-image:url('./img/tictactoe.png');
+    background-size:100% 100%;
+}
+.icon_title{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    font-size:.8rem;
+}
