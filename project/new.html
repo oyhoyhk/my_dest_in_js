@@ -10,6 +10,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
 </head>
 
 <body>
@@ -28,6 +32,7 @@
     <div id="background_cover">
         <div id="exit_clock_button"></div>
         <div id="exit_calendar_button"></div>
+        <div id="exit_tablet_button"></div>
     </div>
     <div id="clock_window">
         <div class="clock_box">
@@ -57,7 +62,6 @@
             <div id="second2" class="clock_number"></div>
         </div>
     </div>
-
     <div id="calendar_window">
         <div id="calendar_left">
             <div id="calendar_detail_date">23</div>
@@ -94,6 +98,41 @@
             </div>
         </div>
     </div>
+    <div id="tablet_window" droppable=true>
+        <div id="tablet_home_button"></div>
+        <div id="tablet_screen">
+            <div class="tablet_icon" id="card_game" draggable=true>
+                <div class="icon_image_container">
+                    <div id="card_image" ></div>
+                </div>
+                <div class="icon_title">카드 맞추기</div>
+                <div class="icon_clicked_cover"></div>
+            </div>
+            <div class="tablet_icon" id="order_game" draggable=true>
+                <div class="icon_image_container">
+                    <div id="order_image" ></div>
+                </div>
+                <div class="icon_title">순서 맞추기</div>
+                <div class="icon_clicked_cover"></div>
+            </div>
+            <div class="tablet_icon" id="tictactoe_game" draggable=true>
+                <div class="icon_image_container">
+                    <div id="tictactoe_image" ></div>
+                </div>
+                <div class="icon_title">TicTacToe</div>
+                <div class="icon_clicked_cover"></div>
+            </div>
+        </div>
+        <div id="tablet_camera"></div>
+        <div id="tablet_status_bar">
+            <div id="status_time">21년 8월 24일 오후 2시 1분</div>
+            <div id="status_icons">
+                <div id="status_wifi"></div>
+                <div id="status_battery_percentage">100%</div>
+                <div id="status_battery"></div>
+            </div>
+        </div>
+    </div>
     <div id="alert_cover">
         <div id="alert_window">
             <div id="alert_image"></div>
@@ -115,7 +154,7 @@
         const backgroundCover = document.getElementById('background_cover');
         const exitClockButton = document.getElementById('exit_clock_button');
         const exitCalendarButton = document.getElementById('exit_calendar_button');
-
+        const exitTabletButton = document.getElementById('exit_tablet_button');
         // 시작 인트로 부분
         startButton.addEventListener('click', () => {
             mainCover.style.opacity = 0;
@@ -132,6 +171,91 @@
                 }, 1000)
             }, 1000)
         })
+
+        // 태블릿 클릭 이벤트 
+
+        const tabletWindow = document.getElementById('tablet_window');
+        tablet.addEventListener('click', () => {
+            backgroundCover.style.display = 'block';
+            setTimeout(() => {
+                backgroundCover.style.opacity = 1;
+            }, 50);
+            tabletWindow.style.top = `calc(50% - 300px)`;
+            exitTabletButton.style.display = 'block';
+        })
+
+        exitTabletButton.addEventListener('click', () => {
+            tabletWindow.style.top = '130%';
+            exitTabletButton.style.display = 'non';
+            backgroundCover.style.opacity = 0;
+            setTimeout(() => {
+                backgroundCover.style.display = 'none';
+            })
+        })
+
+        let tabletPower = false;
+
+        const tabletHomeButton = document.getElementById('tablet_home_button');
+        const tabletScreen = document.getElementById('tablet_screen');
+        const tabletStatusBar = document.getElementById('tablet_status_bar');
+        
+        tabletHomeButton.addEventListener('click', () => {
+            if (!tabletPower) {
+                tabletScreen.style.opacity = 1;
+                tabletScreen.style.filter = `blur(0)`;
+                tabletStatusBar.style.opacity=1;
+                updateStatusBarTime();
+                tabletPower = true;
+            } else {
+                tabletScreen.style.opacity = 0;
+                tabletScreen.style.filter = `blur(3rem)`;
+                tabletStatusBar.style.opacity=0;
+                tabletPower = false;
+            }
+        })
+
+        // 아이콘 클릭시 선택된 표시 추가
+
+        const icons = document.querySelectorAll('.icon_clicked_cover');
+        const iconsClicked = new Array(icons.length).fill(false);
+
+        icons.forEach((el,idx)=>{
+            el.parentNode.addEventListener('dragend',e=>{
+                console.log(e);
+            })
+
+            el.addEventListener('click',(e)=>{
+                iconsClicked.forEach((ele,i)=>{
+                    if(ele && idx!==i){
+                        icons[i].classList.remove('icon_clicked');
+                        iconsClicked[i]=false;
+                    }
+                })
+                e.stopPropagation();
+                if(!el.clicked){
+                    el.classList.add('icon_clicked')
+                }else{
+                    el.classList.remove('icon_clicked');
+                }
+                iconsClicked[idx]=!iconsClicked[idx];
+
+                console.log(iconsClicked);
+            })
+        })
+        // 태블릿 바탕화면 클릭하면 아이콘 클릭 해제
+        tabletScreen.addEventListener('click',()=>{  
+            icons.forEach((el,idx)=>{
+                el.classList.remove('icon_clicked');
+                iconsClicked[idx]=false;
+            });
+            
+        })
+        function updateStatusBarTime(){
+            const statusTime = document.getElementById('status_time');
+            const date = new Date();
+            const timeInfo = `${date.getFullYear()%100}년 ${date.getMonth()+1}월 ${date.getDate()}일 ${date.getHours() >= 12 ? '오후' : '오전'} ${date.getHours() > 12 ? date.getHours()-12 : date.getHours()}시 ${date.getMinutes()}분`
+            statusTime.textContent = timeInfo;
+        }
 
         // 달력 클릭 이벤트
         const calendarWindow = document.getElementById('calendar_window');
@@ -159,6 +283,7 @@
         const dayValue = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
         const today = [currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate()]
         let chosenDate = [...today];
+        let localStorageData = JSON.parse(localStorage.data);
 
         createCalendar(currentDate);
         const postButton = document.getElementById('calendar_post_button');
@@ -171,8 +296,8 @@
             saveTodoInLocalStorage(today, chosenDate, todoTextInput.value);
             createCalendar(currentDate);
         })
-        todoTextInput.addEventListener('keypress', e =>{
-            if(e.key ==='Enter'){
+        todoTextInput.addEventListener('keypress', e => {
+            if (e.key === 'Enter') {
                 saveTodoInLocalStorage(today, chosenDate, todoTextInput.value);
                 createCalendar(currentDate);
             }
@@ -194,6 +319,9 @@
             currentDate = new Date();
             createCalendar(currentDate);
         })
+        if (!localStorage['data']) {
+            localStorage.setItem('data', JSON.stringify({}));
+        }
 
         function createCalendar(date) {
             const copyDate = new Date(date);
@@ -215,19 +343,13 @@
             copyDate.setDate(currentDate.getDate());
             calendarDetailDate.textContent = copyDate.getDate();
             calendarDetailDay.textContent = dayValue[copyDate.getDay()];
-            let dateString = copyDate.getFullYear()+'.'+(copyDate.getMonth()+1)+'.'+copyDate.getDate();
-            if(localStorage[dateString]){
-                createTodoList(localStorage[dateString]);
-            }else{
+            let dateString = copyDate.getFullYear() + '.' + (copyDate.getMonth() + 1) + '.' + copyDate.getDate();
+            if (localStorageData[dateString].length !== 0) {
+                createTodoList(dateString);
+            } else {
                 createTodoList();
             }
-            let todoDays=[];
-            let currentMonthInfo=`${currentDate.getFullYear()}.${currentDate.getMonth()+1}`;
-            for(let day in localStorage){
-                if(day.includes(currentMonthInfo)){
-                    todoDays.push(day.split('.')[2])
-                }
-            }
+            let currentMonthInfo = `${currentDate.getFullYear()}.${currentDate.getMonth()+1}`;
             calendarContainer.innerHTML = '';
 
             for (let i = 0; i < rowLength; i++) {
@@ -278,17 +400,19 @@
                     createCalendar(date);
                 })
             })
+            let currentDateString = currentDate.getFullYear() + '.' + (currentDate.getMonth() + 1) + '.';
             currentDays.forEach(el => {
-                if(todoDays.includes(el.textContent)){
+                let thisDateInfo = currentDateString + el.textContent;
+                if (localStorageData[thisDateInfo] && localStorageData[thisDateInfo].length !== 0) {
                     const point = document.createElement('div');
                     point.classList.add('todo');
                     el.appendChild(point);
                 }
                 el.addEventListener('click', () => {
-                    if(clickedDay){
+                    if (clickedDay) {
                         clickedDay.classList.remove('calendar_clicked');
                     }
-                    clickedDay= el;
+                    clickedDay = el;
                     el.classList.add('calendar_clicked');
                     calendarDetailDate.textContent = el.textContent;
                     date.setDate(el.textContent)
@@ -296,44 +420,47 @@
                     chosenDate = [currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate
                         .getDate()
                     ];
-                    if (localStorage[chosenDate.join('.')]) {
-                        createTodoList(localStorage[chosenDate.join('.')])
-                    }else{
+                    if (localStorageData[chosenDate.join('.')] && localStorageData[chosenDate.join('.')]
+                        .length !== 0) {
+                        createTodoList(chosenDate.join('.'))
+                    } else {
                         createTodoList();
                     }
                 })
             })
         }
 
-        function createTodoList(data) {
+        function createTodoList(dataInfo) {
             const todoContainer = document.getElementById('calendar_todo_lists');
             todoContainer.innerHTML = '';
-            if(!data){
-                todoContainer.textContent='할 일을 입력해주세요';
+            if (!dataInfo) {
+                todoContainer.textContent = '할 일을 입력해주세요';
                 return;
             }
-            const todos = data.split('---').map(el => el.split('___')[0]);
-            todos.forEach(el => {
+            const todos = localStorageData[dataInfo];
+            todos.forEach((el, idx) => {
                 const todo = document.createElement('div');
-                
+
                 todo.classList.add('calendar_todo');
-                
+
                 const todoText = document.createElement('div');
                 todoText.classList.add('calendar_todo_text');
-                todoText.textContent = el.length > 15 ? '⚬ '+ el.slice(0,15)+'...' : '⚬ '+el;
+                todoText.textContent = el[0].length > 15 ? '⚬ ' + el[0].slice(0, 15) + '...' : '⚬ ' + el[0];
 
                 const todoDeleteButton = document.createElement('div');
+                todoDeleteButton.todoIndex = idx;
                 todoDeleteButton.classList.add('calendar_todo_delete');
 
-                todoDeleteButton.addEventListener('click',()=>{
-                    const dateInfo=`${currentDate.getFullYear()}.${currentDate.getMonth()+1}.${currentDate.getDate()}`;
-                    localStorage[dateInfo] = localStorage[dateInfo].split('---').filter(element=>!element.includes(el)).join('---');
-                    if(localStorage[dateInfo].length===0){
-                        localStorage.removeItem(dateInfo);
+                todoDeleteButton.addEventListener('click', () => {
+                    const dateInfo =
+                        `${currentDate.getFullYear()}.${currentDate.getMonth()+1}.${currentDate.getDate()}`;
+                    localStorageData[dateInfo].splice([todoDeleteButton.todoIndex, 1]);
+                    localStorage.data = JSON.stringify(localStorageData);
+                    if (localStorageData[dateInfo].length === 0) {
                         createCalendar(currentDate);
                         return;
                     }
-                    createTodoList(localStorage[dateInfo]);
+                    createTodoList(dateInfo);
                 })
 
                 todo.appendChild(todoText);
@@ -350,17 +477,15 @@
                     loadAlertWindow(false, '내용을 입력해주세요');
                     return;
                 }
-                console.log(data, localStorage[dateInfo])
-                if(localStorage[dateInfo] && localStorage[dateInfo].split('---').map(el=>el.split('___')[0]).includes(data)){
-                    loadAlertWindow(false, '이미 등록이 되어 있습니다');
-                    return;
-                }
                 loadAlertWindow(true, `${chosenDate[0]%100}년 ${chosenDate[1]}월 ${chosenDate[2]}일에 할일이 등록 되었습니다.`);
-                if (localStorage[dateInfo]) { // 각 todo는 --- 로 구분
-                    localStorage.setItem(dateInfo, localStorage.getItem(dateInfo) + '---' + data + '___');
-                } else {
-                    localStorage.setItem(dateInfo, data + '___') // todo 제목과 내용을 _ x 3으로 구분
+
+                localStorageData = JSON.parse(localStorage.data);
+                if (!localStorageData[dateInfo]) {
+                    localStorageData[dateInfo] = [];
+
                 }
+                localStorageData[dateInfo].push([data]);
+                localStorage.data = JSON.stringify(localStorageData)
             } else {
                 loadAlertWindow(false, '이미 지난 날엔 계획을 세울 수 없습니다');
             }
@@ -457,8 +582,10 @@
                 let second = date.getUTCSeconds();
                 let moved = new Array(6).fill(false);
 
-                let clockValue = [hour >= 10 ? Math.floor(hour/10) : 0, hour % 10, Math.floor(min / 10), min % 10, Math.floor(second /
-                    10), Math.floor(second % 10)]
+                let clockValue = [hour >= 10 ? Math.floor(hour / 10) : 0, hour % 10, Math.floor(min / 10), min % 10,
+                    Math.floor(second /
+                        10), Math.floor(second % 10)
+                ]
                 const rotateDegree = new Array(6).fill(0);
                 const clockNumbers = document.querySelectorAll('.clock_number');
                 clockNumbers.forEach((el, idx) => {
@@ -506,7 +633,6 @@
                         }, 500)
                     })
                     moved = moved.map(el => false);
-                    console.log(clockValue);
                 }, 1000)
             }
         }
