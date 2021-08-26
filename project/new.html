@@ -123,7 +123,9 @@
                 <div class="icon_clicked_cover"></div>
             </div>
             <div id="tablet_game_screen">
-                <div id="game_container"></div>
+                <div id="game_container">
+                    <div class="game_screen_block"></div>
+                </div>
                 <div id="game_count_cover">
                     <div id="game_count_cover_button">시작하기</div>
                 </div>
@@ -229,7 +231,7 @@
                     setTimeout(() => {
                         backgroundCover.style.display = 'none';
                     }, 1000)
-                },500)
+                }, 500)
                 tabletScreen.style.opacity = 0;
                 tabletScreen.style.filter = `blur(3rem)`;
                 tabletStatusBar.style.opacity = 0;
@@ -284,10 +286,14 @@
 
         const icons = document.querySelectorAll('.icon_clicked_cover');
         const iconsClicked = new Array(icons.length).fill(false);
+
         let currentGame = '카드 맞추기';
         let cardStage = 1;
-        let lastStage = 1;
+        let lastCardStage = 1;
         let cardGameRecords = localStorage.card ? JSON.parse(localStorage.card) : [];
+        let orderGameRecords = localStorage.order ? JSON.parse(localStorage.order) : [];
+        let tictactoeGameRecords = localStorage.tictactoe ? JSON.parse(localStorage.tictactoe) : [];
+
         const cardGameStage = [4, 6, 8, 12, 16, 20, 24];
         const cardGameChance = [1, 2, 2, 3, 3, 4, 4];
         const cardGameRowNumber = [2, 3, 4, 4, 4, 5, 6];
@@ -301,6 +307,23 @@
             "ㄷㄷ.. 6단계라니 대단하십니다",
             "헉... 이걸 깨다니 대단합니다!",
         ]
+
+        let orderStage = 1;
+        let lastOrderStage = 1;
+        const orderGameStage = [2, 3, 3, 3, 4, 4, 5];
+        const orderGameChance = [1, 1, 2, 2, 3, 3, 4];
+        const orderGameNumber = [4, 5, 7, 9, 12, 16, 20];
+        const orderGameMessage = [
+            "1단계도 못 깨는건 쫌...",
+            "겨우 1단계...?",
+            "2단계라구요...?",
+            "흠, 3단계까지네요!",
+            "4단계? 좀 하시네요!",
+            "5단계요? 제법이시네요!",
+            "ㄷㄷ.. 6단계라니 대단하십니다",
+            "헉... 이걸 깨다니 대단합니다!",
+        ]
+
         icons.forEach((el, idx) => {
             el.parentNode.style.left = 0 + 'px'; // 아이콘 드래그 이벤트
             el.parentNode.style.top = 20 + 110 * idx + 'px';
@@ -309,13 +332,11 @@
                 e.target.style.background = 'transparent';
             })
             el.parentNode.addEventListener('dragend', e => {
-                console.log(e.offsetX, e.offsetY);
                 if (e.clientX > 500 && e.clientX < 1350 && e.clientY > 225 && e.clientY < 780) {
                     el.parentNode.style.left = parseInt(el.parentNode.style.left) + (e.offsetX - 45) +
                         'px';
                     el.parentNode.style.top = parseInt(el.parentNode.style.top) + (e.offsetY - 45) +
                         'px';
-                    console.log(el.parentNode.style.left, el.parentNode.style.top);
 
                 }
                 e.target.classList.remove('grabbing')
@@ -329,9 +350,33 @@
                 })
                 gameScreen.classList.add('game_screen_on');
                 scoreScreen.classList.add('game_screen_on');
+                const gameContainer = document.getElementById('game_container');
+                const tabletPin = document.getElementById('tablet_pin');
                 currentGame = el.previousElementSibling.textContent
+
                 switch (currentGame) {
                     case '카드 맞추기':
+                        gameContainer.style.backgroundImage = `url('./img/card-background.png')`;
+                        countCover.style.backgroundImage = `url('./img/card-background.png')`;
+                        scoreScreen.style.background =
+                            'linear-gradient(-30deg,rgb(248, 184, 8), rgb(245, 216, 136) 50%, rgb(255, 174, 0) 100%)'
+                        tabletPin.style.backgroundImage = 'url("./img/pin.png")';
+                        break;
+                    case '순서 맞추기':
+                        gameContainer.style.backgroundImage = `url('./img/order-background.jpeg')`;
+                        countCover.style.backgroundImage = `url('./img/order-background.jpeg')`;
+                        scoreScreen.style.background =
+                            'linear-gradient(-30deg,#279cfc, rgb(177, 228, 252) 50%, #279cfc 100%)'
+                        tabletPin.style.backgroundImage = 'url("./img/pin2.png")';
+                        break;
+                    case 'TicTacToe':
+                        gameContainer.style.backgroundImage = `url('./img/tictactoe-background.jpg')`;
+                        countCover.style.backgroundImage = `url('./img/tictactoe-background.jpg')`;
+                        scoreScreen.style.background =
+                            'linear-gradient(-30deg,#63ffa9, rgb(199, 255, 236) 50%, #64ffdd 100%)'
+                        tabletPin.style.backgroundImage = 'url("./img/pin3.png")';
+                        break;
+                    default:
                         break;
                 }
                 createRecordList(currentGame);
@@ -355,7 +400,6 @@
 
             })
         })
-        console.log(localStorage.card);
 
         // const cardGameStage = [4, 6, 8, 12, 16, 20, 24];
         // const cardGameChance = [1, 2, 2, 3, 3, 4, 4];
@@ -368,6 +412,11 @@
                 case '카드 맞추기':
                     createCardGame(cardStage);
                     break;
+                case '순서 맞추기':
+                    createOrderGame(orderStage);
+                    break;
+                case 'TicTacToe':
+                    break;
             }
         })
 
@@ -376,11 +425,14 @@
             const enrollWindow = document.getElementById('enroll_window');
 
             e.preventDefault();
-            console.log(name);
             switch (currentGame) {
                 case '카드 맞추기':
-                    cardGameRecords.push([name.value ? name.value : 'Player', lastStage]);
+                    cardGameRecords.push([name.value ? name.value : 'Player', lastCardStage]);
                     localStorage.card = JSON.stringify(cardGameRecords);
+                    break;
+                case '순서 맞추기':
+                    orderGameRecords.push([name.value ? name.value : 'Player', lastCardStage]);
+                    localStorage.order = JSON.stringify(orderGameRecords);
                     break;
             }
             name.value = '';
@@ -396,9 +448,18 @@
             let records;
             switch (game) {
                 case '카드 맞추기':
-                    records =cardGameRecords;
+                    records = cardGameRecords;
+                    break;
+                case '순서 맞추기':
+                    records = orderGameRecords;
+                    break;
+                case 'TicTacToe':
+                    records = tictactoeGameRecords;
+                    break;
+                default:
+                    break;
+
             }
-            console.log(records);
             const recordList = document.getElementById('record_list');
             recordList.innerHTML = '';
             records.forEach(el => {
@@ -416,8 +477,137 @@
             })
         }
 
+        // const orderGameStage = [2, 3, 3, 3, 4, 4, 5];
+        // const orderGameChance = [1, 1, 2, 2, 3, 3, 4];
+        // const orderGameNumber = [4, 5, 7, 9, 12, 16, 20];
+        function createOrderGame(stage) {
+            let chance = orderGameChance[stage - 1];
+
+            const stageNumber = orderGameStage[stage - 1];
+            const gameContainer = document.getElementById('game_container');
+            const answerArray = createOrderArray(stage);
+            const stageInfo = document.getElementById('stage_info');
+            const chanceInfo = document.getElementById('chance_info');
+            const enrollWindow = document.getElementById('enroll_window');
+            const lastStageInfo = document.getElementById('last_stage_info');
+            const enrollCover = document.getElementById('enroll_cover');
+            let userInput = [];
+            console.log(answerArray);
+            console.log(stageNumber);
+
+            stageInfo.textContent = `스테이지 : ${stage}단계`;
+            chanceInfo.textContent = `남은 기회 : ${chance}번`;
+
+            for (let i = 0; i < stageNumber; i++) {
+                const row = document.createElement('div');
+                row.style.height = (90 / stageNumber) + '%';
+                row.classList.add('order_row');
+                for (let j = 0; j < stageNumber; j++) {
+                    const div = document.createElement('div');
+                    div.style.width = (90 / stageNumber) + '%';
+                    div.classList.add('order_box');
+                    div.addEventListener('click', () => {
+                        userInput.push(stageNumber * i + j);
+                        if (userInput[userInput.length - 1] === answerArray[userInput.length - 1]) {
+                            div.classList.add('order_box_clicked');
+                            if (userInput.length === answerArray.length) {
+                                countCover.style.display = 'flex';
+                                countCover.children[0].style.fontSize = '4rem';
+                                countCover.children[0].textContent = '다음 단계로';
+                                gameContainer.innerHTML = '';
+                                const block = document.createElement('div');
+                                block.classList.add('game_screen_block');
+                                gameContainer.appendChild(block);
+                                if (orderStage === 7) {
+                                    countCover.children[0].textContent = '처음부터 다시하기';
+                                    lastStageInfo.textContent = orderGameMessage[orderStage];
+                                    orderStage = 1;
+                                    setTimeout(() => {
+                                        countCover.style.opacity = 1;
+                                        enrollCover.style.display = 'flex';
+                                        document.getElementById('enroll').focus();
+                                        setTimeout(() => {
+                                            enrollCover.style.opacity = 1;
+                                            enrollWindow.style.transform = 'translateY(0)';
+
+                                        }, 500)
+                                    }, 10)
+                                }
+
+                                orderStage += 1;
+                                setTimeout(() => {
+                                    countCover.style.opacity = 1;
+                                }, 50)
+                            }
+                        } else {
+                            chance--;
+                            div.classList.add('order_box_wrong');
+                            const transparentCover=document.getElementById('game_transparent_cover');
+                            transparentCover.style.display='block';
+                            setTimeout(()=>{
+                                div.classList.remove('order_box_wrong');
+                                transparentCover.style.display='none';
+                            },1200)
+                            chanceInfo.textContent = `남은 기회 : ${chance}번`;
+                            if (chance === 0) {
+                                lastCardStage = cardStage - 1;
+                                countCover.style.display = 'flex';
+                                countCover.children[0].style.fontSize = '4rem';
+                                countCover.children[0].textContent = '처음부터 다시하기';
+                                gameContainer.innerHTML = '';
+                                const block = document.createElement('div');
+                                block.classList.add('.game_screen_block');
+                                gameContainer.appendChild(block);
+                                lastStageInfo.textContent = orderGameMessage[lastCardStage];
+                                cardStage = 1;
+                                setTimeout(() => {
+                                    countCover.style.opacity = 1;
+                                    enrollCover.style.display = 'flex';
+                                    document.getElementById('enroll').focus();
+
+                                    setTimeout(() => {
+                                        enrollCover.style.opacity = 1;
+                                        enrollWindow.style.transform =
+                                            'translateY(0)';
+                                    }, 500)
+                                }, 10)
+                            }
+                        }
+                    })
+                    row.appendChild(div);
+                }
+                gameContainer.appendChild(row);
+            }
+
+            showOrder(answerArray);
+        }
+
+        function createOrderArray(stage) {
+            const arr = [];
+            for (let i = 0; i < orderGameNumber[stage - 1]; i++) {
+                arr.push(Math.floor(Math.random() * (Math.pow(orderGameStage[stage - 1], 2))));
+            }
+            return arr;
+        }
+
+        function showOrder(answerArray) {
+            const boxes = document.querySelectorAll('.order_box');
+            const transparentCover = document.getElementById('game_transparent_cover');
+            transparentCover.style.display = 'block'
+            answerArray.forEach((el, idx) => {
+                setTimeout(() => {
+                    boxes[el].classList.add('order_box_show');
+                    setTimeout(() => {
+                        boxes[el].classList.remove('order_box_show');
+                        if (answerArray.length - 1 === idx) {
+                            transparentCover.style.display = 'none';
+                        }
+                    }, 500)
+                }, idx * 1000)
+            })
+        }
+
         function createCardGame(stage) {
-            console.log(stage - 1);
             let chance = cardGameChance[stage - 1];
             let answerCount = cardGameStage[stage - 1] / 2;
             const cardNumber = cardGameStage[stage - 1];
@@ -435,14 +625,12 @@
             stageInfo.textContent = `스테이지 : ${stage}단계`;
             chanceInfo.textContent = `남은 기회 : ${chance}번`;
 
-            console.log(answerPair);
-
             let userInput = [];
 
             for (let i = 0; i < rowNum; i++) {
                 const row = document.createElement('div');
                 row.classList.add('card_row');
-                row.style.height = `${93/rowNum}%`;
+                row.style.height = `${90/rowNum}%`;
                 for (let j = 0; j < cardNumber / rowNum; j++) {
                     const cardContainer = document.createElement('div');
                     const idx = i * cardNumber / rowNum + j;
@@ -478,6 +666,9 @@
                                     countCover.children[0].style.fontSize = '4rem';
                                     countCover.children[0].textContent = '다음 단계로';
                                     gameContainer.innerHTML = '';
+                                    const block = document.createElement('div');
+                                    block.classList.add('.game_screen_block');
+                                    gameContainer.appendChild(block);
                                     if (cardStage === 7) {
                                         countCover.children[0].textContent = '처음부터 다시하기';
                                         lastStageInfo.textContent = cardGameMessage[cardStage - 1];
@@ -515,12 +706,15 @@
                                         chanceInfo.textContent = `남은 기회 : ${chance}번`;
 
                                         if (chance === 0) {
-                                            lastStage = cardStage - 1;
+                                            lastCardStage = cardStage - 1;
                                             countCover.style.display = 'flex';
                                             countCover.children[0].style.fontSize = '4rem';
                                             countCover.children[0].textContent = '처음부터 다시하기';
                                             gameContainer.innerHTML = '';
-                                            lastStageInfo.textContent = cardGameMessage[lastStage];
+                                            const block = document.createElement('div');
+                                            block.classList.add('.game_screen_block');
+                                            gameContainer.appendChild(block);
+                                            lastStageInfo.textContent = cardGameMessage[lastCardStage];
                                             cardStage = 1;
                                             setTimeout(() => {
                                                 countCover.style.opacity = 1;
@@ -571,7 +765,6 @@
 
         function showAllCards(order) {
             const cards = document.querySelectorAll('.card');
-            console.log(cards);
             const transparentCover = document.getElementById('game_transparent_cover');
             transparentCover.style.display = 'block';
             for (let i = 0; i < order.length; i++) {
@@ -637,33 +830,32 @@
 
         function gameStartEffect(string) {
             const countCover = document.getElementById('game_count_cover');
-            if (string) {
-                countCover.children[0].textContent = string;
-            }
-            console.log(countCover.children)
-            countCover.children[0].style.fontSize = '4rem';
-            let count = 3;
-            while (count !== 0) {
-                (function (x) {
-                    setTimeout(() => {
-                        countCover.children[0].classList.add('game_count_blur');
-                        setTimeout(() => {
-                            countCover.children[0].style.fontSize = '14rem';
-                            countCover.children[0].classList.remove('game_count_blur');
-                            countCover.children[0].textContent = x;
 
-                            console.log(x);
-                        }, 400)
-                    }, 400 + (3 - x) * 800)
-                })(count)
-                count--;
-            }
-            setTimeout(() => {
-                countCover.style.opacity = 0;
-                setTimeout(() => {
-                    countCover.style.display = 'none';
-                }, 500)
-            }, 2800)
+            countCover.style.display = 'none';
+            // if (string) {
+            //     countCover.children[0].textContent = string;
+            // }
+            // countCover.children[0].style.fontSize = '4rem';
+            // let count = 3;
+            // while (count !== 0) {
+            //     (function (x) {
+            //         setTimeout(() => {
+            //             countCover.children[0].classList.add('game_count_blur');
+            //             setTimeout(() => {
+            //                 countCover.children[0].style.fontSize = '14rem';
+            //                 countCover.children[0].classList.remove('game_count_blur');
+            //                 countCover.children[0].textContent = x;
+            //             }, 400)
+            //         }, 400 + (3 - x) * 800)
+            //     })(count)
+            //     count--;
+            // }
+            // setTimeout(() => {
+            //     countCover.style.opacity = 0;
+            //     setTimeout(() => {
+            //         countCover.style.display = 'none';
+            //     }, 500)
+            // }, 2800)
         }
         // }       0    500      1000          1500    200    
         //시작하기 - 블러 - 블러꺼지면서 3 - 블러 - 블러꺼지면서 2 -블러 - 블러꺼지면서 1 - 커버 사라짐
