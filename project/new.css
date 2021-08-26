@@ -20,7 +20,7 @@ body{
     transition:1s;
 
 
-    display: none;
+    /* display: none; */
 }
 #start_button{
     width:80px;
@@ -44,8 +44,8 @@ body{
     top:calc(50% - 350px);
     box-shadow: 0px 0px 1px rgba(20, 20, 20, 0.08), 0px 1px 8px 2px rgba(20, 20, 20, 0.08);
     background:#fafafa;
-    /* opacity:0; */
-    opacity:1;
+    opacity:0;
+    /* opacity:1; */
     transition:1s;
     overflow:hidden;
     border-radius:12px;
@@ -59,8 +59,8 @@ body{
     left:0;
     top:0;
 
-    /* transform:rotateZ(-25deg) translateX(-1300px) translateY(200px); */
-    transform:rotateZ(-25deg) translateX(-100px) translateY(200px);
+    transform:rotateZ(-25deg) translateX(-1300px) translateY(200px);
+    /* transform:rotateZ(-25deg) translateX(-100px) translateY(200px); */
     transition:1s;
 }
 #wall{
@@ -71,8 +71,8 @@ body{
     left:0;
     top:0;
     transition:1s;
-    /* transform:rotateZ(-25deg) translateX(1000px) translateY(-324px); */
-    transform:rotateZ(-25deg) translateX(-100px) translateY(-324px);
+    transform:rotateZ(-25deg) translateX(1000px) translateY(-324px);
+    /* transform:rotateZ(-25deg) translateX(-100px) translateY(-324px); */
 }
 #tablet{
     position:absolute;
@@ -83,7 +83,7 @@ body{
     background:url('./img/tablet.png');
     background-size:100% 100%;
     transition:1s;
-    /* opacity:0; */
+    opacity:0;
     cursor:pointer
 }
 #clock{
@@ -95,7 +95,7 @@ body{
     background:url('./img/clock.png');
     background-size:100% 100%;
     transition:1s;
-    /* opacity:0; */
+    opacity:0;
     cursor:pointer
 }
 #calendar{
@@ -107,7 +107,7 @@ body{
     background:url('./img/calendar.png');
     background-size:100% 100%;
     transition:1s;
-    /* opacity:0; */
+    opacity:0;
     cursor:pointer
 }
 #note{
@@ -119,7 +119,7 @@ body{
     background:url('./img/note.png');
     background-size:100% 100%;
     transition:1s;
-    /* opacity:0; */
+    opacity:0;
     cursor:pointer
 }
 #note:hover{
@@ -143,8 +143,8 @@ body{
     top:0;
     transition:1s;
     opacity:0;
-    opacity:1
-    /* display:none; */
+    /* opacity:1 */
+    display:none;
 }
 
 #clock_window{
@@ -640,7 +640,7 @@ body{
     position:absolute;
     left:calc(50% - 500px);
     top:130%;
-    top:calc(50% - 300px);
+    /* top:calc(50% - 300px); */
     border:2rem solid #fafafa;
     border-right:4.5rem solid #fafafa;
     box-sizing:content-box;
