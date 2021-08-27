@@ -20,7 +20,15 @@ body{
     transition:1s;
 
 
-    display: none;
+    /* display: none; */
+}
+#screen_transparent_cover{
+    width:900px;
+    height:700px;
+    position:absolute;
+    left:calc(50% - 450px);
+    top:calc(50% - 350px);
+    border-radius:12px;
 }
 #start_button{
     width:80px;
@@ -35,6 +43,17 @@ body{
 }
 #start_button:hover{
     transform:scale(2);
+}
+#screen_home_button{
+    position:absolute;
+    right:2%;
+    top:1%;
+    width:35px;
+    height:35px;
+    background-image:url('./img/home.png');
+    background-size:100% 100%;
+    cursor:pointer;
+    transition:1s;
 }
 #screen{
     width:900px;
@@ -59,8 +78,8 @@ body{
     left:0;
     top:0;
 
-    /* transform:rotateZ(-25deg) translateX(-1300px) translateY(200px); */
-    transform:rotateZ(-25deg) translateX(-100px) translateY(200px);
+    transform:rotateZ(-25deg) translateX(-1300px) translateY(200px);
+    /* transform:rotateZ(-25deg) translateX(-100px) translateY(200px); */
     transition:1s;
 }
 #wall{
@@ -71,8 +90,8 @@ body{
     left:0;
     top:0;
     transition:1s;
-    /* transform:rotateZ(-25deg) translateX(1000px) translateY(-324px); */
-    transform:rotateZ(-25deg) translateX(-100px) translateY(-324px);
+    transform:rotateZ(-25deg) translateX(1000px) translateY(-324px);
+    /* transform:rotateZ(-25deg) translateX(-100px) translateY(-324px); */
 }
 #tablet{
     position:absolute;
@@ -83,7 +102,7 @@ body{
     background:url('./img/tablet.png');
     background-size:100% 100%;
     transition:1s;
-    /* opacity:0; */
+    opacity:0;
     cursor:pointer
 }
 #clock{
@@ -95,7 +114,7 @@ body{
     background:url('./img/clock.png');
     background-size:100% 100%;
     transition:1s;
-    /* opacity:0; */
+    opacity:0;
     cursor:pointer
 }
 #calendar{
@@ -107,7 +126,7 @@ body{
     background:url('./img/calendar.png');
     background-size:100% 100%;
     transition:1s;
-    /* opacity:0; */
+    opacity:0;
     cursor:pointer
 }
 #note{
@@ -119,7 +138,7 @@ body{
     background:url('./img/note.png');
     background-size:100% 100%;
     transition:1s;
-    /* opacity:0; */
+    opacity:0;
     cursor:pointer
 }
 #note:hover{
@@ -1387,4 +1406,131 @@ body{
 .note_record:hover{
     transform:translateX(0);
     color:black;
+}
+
+#clock_detail_container{
+    position:absolute;
+    background:#292c2e;
+    left:27%;
+    top:8%;
+    width:200px;
+    height:150px;
+    border-radius:15px;
+    /* color:#8bb7f8; */
+    color:white;
+    font-family:'Jua';
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:1.05rem;
+    opacity:0;
+    transform:translateY(50px);
+    transition:.5s;
+}
+#clock_detail{
+    width:80%;
+}
+#tablet_detail_container{
+    position:absolute;
+    background:#fafafa;
+    left:5%;
+    top:50%;
+    width:200px;
+    height:150px;
+    border-radius:15px;
+    /* color:#8bb7f8; */
+    color:#292c2e;
+    font-family:'Jua';
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:1.05rem;
+    opacity:0;
+    transform:translateY(50px);
+    transition:.5s;
+    border:3px solid lightblue;
+}
+#tablet_detail{
+    width:80%;
+}
+#note_detail_container{
+    position:absolute;
+    background:#fafafa;
+    left:51%;
+    top:18%;
+    width:200px;
+    height:150px;
+    border-radius:15px;
+    /* color:#8bb7f8; */
+    color:#292c2e;
+    font-family:'Jua';
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:1.05rem;
+    opacity:0;
+    transform:translateY(50px);
+    transition:.5s;
+    border:3px solid lightblue;
+}
+#note_detail_explanation{
+    width:80%;
+}
+#calendar_detail_container{
+    position:absolute;
+    background:#fafafa;
+    right:1%;
+    top:50%;
+    width:200px;
+    height:150px;
+    border-radius:15px;
+    /* color:#8bb7f8; */
+    color:#292c2e;
+    font-family:'Jua';
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:1.05rem;
+    opacity:0;
+    transform:translateY(-50px);
+    transition:.5s;
+    border:3px solid lightblue;
+}
+#calendar_detail{
+    width:80%;
+}
+#tablet_explanation_right{
+    position:absolute;
+    border:5px solid rgb(120, 185, 238);
+    width:200px;
+    height:100px;
+
+    right:-300px;
+    top:calc(50% - 75px);
+    background:#fafafa;
+    border-radius:15px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Jua';
+    opacity:0;
+    transition:1s;
+}
+#tablet_explanation_left{
+    position:absolute;
+    border:5px solid rgb(120, 185, 238);
+    padding:20px;
+    width:150px;
+    height:140px;
+    left:-250px;
+    top:10%;
+    background:#fafafa;
+    border-radius:15px;
+    justify-content:center;
+    align-items:center;
+    font-family:'Jua';
+    transition:1s;
+    font-size:1.1rem;
+    line-height:30px;
+    opacity:0;
 }
