@@ -25,7 +25,26 @@
         <div id="clock"></div>
         <div id="calendar"></div>
         <div id="note"></div>
+        <div id="clock_detail_container">
+            <div id="clock_detail">requestAnimationFrame 메소드를 이용해 만든 <br /><strong style="color:#8bb7f8">디지털
+                    시계</strong>입니다</div>
+        </div>
+        <div id="tablet_detail_container">
+            <div id="tablet_detail">Javascript와 css 요소를 조합하여 만든 <strong
+                    style="color:rgb(226, 118, 118)">태블릿</strong>입니다. <strong style="color:rgb(226, 118, 118)">세 가지
+                    게임</strong>을 포함하고 있습니다</div>
+        </div>
+        <div id="note_detail_container">
+            <div id="note_detail_explanation">localStorage 세션과 연동되어 개인 컴퓨터에 기록을 남길 수 있는 <strong
+                    style="color:rgb(226, 118, 118)">메모장</strong></strong>입니다. 달력과 연동이 됩니다.</div>
+        </div>
+        <div id="calendar_detail_container">
+            <div id="calendar_detail">Javascript로 제작한 <strong style="color:rgb(226, 118, 118)">달력</strong>입니다. 일정을 등록할 수
+                있고 메모장과 연동됩니다.</div>
+        </div>
+        <div id="screen_home_button"></div>
     </div>
+    <div id="screen_transparent_cover"></div>
     <div id="main_cover">
         <div id="start_button"></div>
     </div>
@@ -114,6 +133,13 @@
     <div id="tablet_window">
         <div id="tablet_home_button"></div>
         <div id="tablet_home_button_cover"></div>
+        <div id="tablet_explanation_right"></div>
+        <div id="tablet_explanation_left">
+            게임 아이콘을<br />
+            <strong style="color:red">클릭</strong>하여 <strong style="color:red">선택</strong>하거나 <br /> <strong
+                style="color:red">드래그</strong>할 수 있고 <br />
+            <strong style="color:blue">더블 클릭</strong>하여 게임을 <br /><strong style="color:blue">실행</strong>할 수 있습니다.
+        </div>
         <div id="tablet_screen" droppable=true>
             <div class="tablet_icon" id="card_game" draggable=true>
                 <div class="icon_image_container">
@@ -205,6 +231,11 @@
         const exitCalendarButton = document.getElementById('exit_calendar_button');
         const exitTabletButton = document.getElementById('exit_tablet_button');
         const exitNoteButton = document.getElementById('exit_note_button');
+        const clockDetail = document.getElementById('clock_detail_container');
+        const tabletDetail = document.getElementById('tablet_detail_container');
+        const noteDetailEx = document.getElementById('note_detail_container');
+        const calendarDetail = document.getElementById('calendar_detail_container');
+        const screenHomeButton = document.getElementById('screen_home_button');
 
         // 시작 인트로 부분
         startButton.addEventListener('click', () => {
@@ -219,10 +250,62 @@
                     calendar.style.opacity = 1;
                     note.style.opacity = 1;
                     clock.style.opacity = 1;
+                    screenHomeButton.style.opacity=1;
+                    document.getElementById('screen_transparent_cover').style.display='none';
                 }, 1000)
             }, 1000)
         })
+        screenHomeButton.addEventListener('click',()=>{
+            tablet.style.opacity=0;
+            calendar.style.opacity=0;
+            note.style.opacity=0;
+            clock.style.opacity=0;
+            screenHomeButton.style.opacity=0;
+            document.getElementById('screen_transparent_cover').style.display='block';
+            setTimeout(()=>{
+                screen.style.opacity = 0;
+                mainCover.style.display = 'block';
+                desk.style.transform = `rotateZ(-25deg) translateX(-1300px) translateY(200px)`;
+                wall.style.transform = `rotateZ(-25deg) translateX(1000px) translateY(-324px)`;
+                setTimeout(()=>{
+                    mainCover.style.opacity=1;
+                })
+            },1000)
 
+        })
+
+        clock.addEventListener('mouseover', () => {
+            clockDetail.style.opacity = 1;
+            clockDetail.style.transform = 'translateY(0)'
+        })
+        clock.addEventListener('mouseleave', () => {
+            clockDetail.style.opacity = 0;
+            clockDetail.style.transform = 'translateY(50px)'
+        })
+        tablet.addEventListener('mouseover', () => {
+            tabletDetail.style.opacity = 1;
+            tabletDetail.style.transform = 'translateY(0)'
+        })
+        tablet.addEventListener('mouseleave', () => {
+            tabletDetail.style.opacity = 0;
+            tabletDetail.style.transform = 'translateY(50px)'
+        })
+        note.addEventListener('mouseover', () => {
+            noteDetailEx.style.opacity = 1;
+            noteDetailEx.style.transform = 'translateY(0)'
+        })
+        note.addEventListener('mouseleave', () => {
+            noteDetailEx.style.opacity = 0;
+            noteDetailEx.style.transform = 'translateY(50px)'
+        })
+        calendar.addEventListener('mouseover', () => {
+            calendarDetail.style.opacity = 1;
+            calendarDetail.style.transform = 'translateY(0)'
+        })
+        calendar.addEventListener('mouseleave', () => {
+            calendarDetail.style.opacity = 0;
+            calendarDetail.style.transform = 'translateY(-50px)'
+        })
         const alertConfirm = document.getElementById('alert_confirm');
         //노트 클릭 이벤트
 
@@ -241,7 +324,7 @@
             }, 50);
             noteWindow.style.top = `calc(50% - 350px)`;
             exitNoteButton.style.display = 'block';
-            createNoteRecordsList();            
+            createNoteRecordsList();
         })
 
         exitNoteButton.addEventListener('click', () => {
@@ -257,52 +340,57 @@
             }, 500)
 
         })
-        function createNoteRecordsList(){
-             days = Object.keys(localStorageData);
-             const recordBackgroundInfo=['rgb(255, 108, 108)','#ffbc57','#ffa060' , '#a6fc75', '#78b5fc' ,'#8e78f1', '#c578f1']; 
-                // console.log(el.replace(/-/g,'.'));
+
+        function createNoteRecordsList() {
+            days = Object.keys(localStorageData);
+            const recordBackgroundInfo = ['rgb(255, 108, 108)', '#ffbc57', '#ffa060', '#a6fc75', '#78b5fc', '#8e78f1',
+                '#c578f1'
+            ];
             const noteRecordCotnainer = document.getElementById('note_record_container');
+            noteRecordCotnainer.innerHTML = '';
             days.forEach(day => {
-                localStorageData[day].forEach((el,idx)=>{
-                    console.log(el);
+                localStorageData[day].forEach((el, idx) => {
                     const record = document.createElement('div');
                     record.classList.add('note_record');
-
+                    const date = document.createElement('div');
                     date.classList.add('record_date');
                     const title = document.createElement('div');
-                    const randomNum = Math.floor(Math.random()*7);
+                    const randomNum = Math.floor(Math.random() * 7);
 
-                    record.style.background=recordBackgroundInfo[randomNum];
-                    date.textContent=`${day.replace(/-/, '.')}`
-                    title.textContent=`${el[0].slice(0,3)}...`
+                    record.style.background = recordBackgroundInfo[randomNum];
+                    date.textContent = `${day.replace(/-/, '.')}`
+                    title.textContent = `${el[0].slice(0,3)}...`
                     record.appendChild(title);
                     record.appendChild(date);
-                    record.addEventListener('click',()=>{
-                        noteTitle.value=el[0];
-                        noteDetail.value=el[1];
-                        noteDateInput.value=day;
+                    record.addEventListener('click', () => {
+                        noteTitle.value = el[0];
+                        noteDetail.value = el[1];
+                        noteDateInput.value = day;
                     })
                     noteRecordCotnainer.appendChild(record);
                 })
             })
         }
         noteSubmit.addEventListener('click', (e) => {
-            if(noteTitle.value === ''){
-                loadAlertWindow(false,'제목을 입력해주세요');
+            if (noteTitle.value === '') {
+                loadAlertWindow(false, '제목을 입력해주세요');
                 return;
             }
             const dateInfo = noteDateInput.value;
-            const dateValue = dateInfo.split('-').map(el=>parseInt(el));
-            if(!localStorageData[dateInfo]){
-                localStorageData[dateInfo]=[[noteTitle.value, noteDetail.value || '']];
-            }else{
-                localStorageData[dateInfo].push([noteTitle.value, noteDetail.value || '' ]);
+            const dateValue = dateInfo.split('-').map(el => parseInt(el));
+            if (!localStorageData[dateInfo]) {
+                localStorageData[dateInfo] = [
+                    [noteTitle.value, noteDetail.value || '']
+                ];
+            } else {
+                localStorageData[dateInfo].push([noteTitle.value, noteDetail.value || '']);
             }
             localStorage.data = JSON.stringify(localStorageData);
             loadAlertWindow(true, `${dateValue[0]/100}년 ${dateValue[1]}월 ${dateValue[2]}일에 할일이 등록 되었습니다.`);
-            noteTitle.value='';
-            noteDetail.value='';
-            noteDateInput.value=new Date().toISOString().slice(0,10);
+            createNoteRecordsList();
+            noteTitle.value = '';
+            noteDetail.value = '';
+            noteDateInput.value = new Date().toISOString().slice(0, 10);
         })
         // 태블릿 클릭 이벤트 
 
@@ -316,17 +404,32 @@
         const tabletWindow = document.getElementById('tablet_window');
 
         tablet.addEventListener('click', () => {
+
             backgroundCover.style.display = 'block';
+
             setTimeout(() => {
                 backgroundCover.style.opacity = 1;
             }, 50);
             tabletWindow.style.top = `calc(50% - 300px)`;
             exitTabletButton.style.display = 'block';
             requestAnimationFrame(updateStatusBarTime);
+            const tabletExplanationRight = document.getElementById('tablet_explanation_right');
+            tabletExplanationRight.innerHTML =
+                '<div id="tablet_explanation_right_text">태블릿의 <strong style="color:red">홈버튼</strong>으로<br/>전원을 <strong style="color:red">켜거나 끌 수</strong> 있습니다.</div>';
+            setTimeout(() => {
+                tabletExplanationRight.style.opacity = 1;
+            }, 1000)
         })
 
         exitTabletButton.addEventListener('click', () => {
-            if (tabletPower) {
+            const tabletExplanationLeft = document.getElementById('tablet_explanation_left');
+            const tabletExplanationRight = document.getElementById('tablet_explanation_right');
+
+            if (tabletPower) { // 전원켜져있을 때 나가기
+
+                tabletExplanationLeft.style.opacity = 0;
+                tabletExplanationRight.style.opacity = 0;
+
                 setTimeout(() => {
                     tabletWindow.style.top = '130%';
                     exitTabletButton.style.display = 'none';
@@ -334,7 +437,7 @@
                     setTimeout(() => {
                         backgroundCover.style.display = 'none';
                     }, 1000)
-                }, 500)
+                }, 1500)
                 tabletScreen.style.opacity = 0;
                 tabletScreen.style.filter = `blur(3rem)`;
                 tabletStatusBar.style.opacity = 0;
@@ -346,13 +449,17 @@
                 document.getElementById('game_container').innerHTML = '';
 
                 currentGame = null;
-            } else {
-                tabletWindow.style.top = '130%';
-                exitTabletButton.style.display = 'none';
-                backgroundCover.style.opacity = 0;
+            } else { //전원꺼져잇을때 나가기
+                tabletExplanationRight.style.opacity = 0;
                 setTimeout(() => {
-                    backgroundCover.style.display = 'none';
+                    tabletWindow.style.top = '130%';
+                    exitTabletButton.style.display = 'none';
+                    backgroundCover.style.opacity = 0;
+                    setTimeout(() => {
+                        backgroundCover.style.display = 'none';
+                    }, 1000)
                 }, 1000)
+
             }
 
 
@@ -363,13 +470,27 @@
 
         // 태블릿 홈 버튼(화면 on/off)
         tabletHomeButton.addEventListener('click', () => {
-            if (!tabletPower) {
+            const tabletExplanationLeft = document.getElementById('tablet_explanation_left');
+            const tabletExplanationRight = document.getElementById('tablet_explanation_right');
+
+            if (!tabletPower) { // 태블릿 전원꺼져있을때
                 tabletScreen.style.opacity = 1;
                 tabletScreen.style.filter = `blur(0)`;
                 tabletStatusBar.style.opacity = 1;
                 tabletPower = true;
-            } else {
-                if (currentGame !== null) {
+                setTimeout(() => {
+                    tabletExplanationLeft.style.opacity = 1;
+                }, 600)
+            } else { //전원켜져있을 때
+
+                if (currentGame !== null) { //게임중이라면
+                    tabletExplanationRight.style.opacity = 0;
+                    setTimeout(() => {
+                        tabletExplanationRight.innerHTML =
+                            '<div id="tablet_explanation_right_text">태블릿의 <strong style="color:red">홈버튼</strong>으로<br/>전원을 <strong style="color:red">켜거나 끌 수</strong> 있습니다.</div>';
+                        tabletExplanationRight.style.opacity = 1;
+                    }, 1000)
+                    tabletExplanationLeft.style.opacity=1;
                     gameScreen.classList.remove('game_screen_on');
                     scoreScreen.classList.remove('game_screen_on');
                     document.getElementById('game_count_cover_button').textContent = '시작하기';
@@ -388,6 +509,8 @@
 
                     return;
                 }
+                //게임중이아니라면
+                tabletExplanationLeft.style.opacity = 0;
                 tabletScreen.style.opacity = 0;
                 tabletScreen.style.filter = `blur(3rem)`;
                 tabletStatusBar.style.opacity = 0;
@@ -400,7 +523,7 @@
         const icons = document.querySelectorAll('.icon_clicked_cover');
         const iconsClicked = new Array(icons.length).fill(false);
 
-        let currentGame = '카드 맞추기';
+        let currentGame = null;
         let cardStage = 1;
         let lastCardStage = 1;
         let cardGameRecords = localStorage.card ? JSON.parse(localStorage.card) : [];
@@ -455,6 +578,15 @@
                 e.target.classList.remove('grabbing')
             })
             el.addEventListener('dblclick', () => { //아이콘 더블클릭 이벤트
+                const tabletExplanationLeft = document.getElementById('tablet_explanation_left');
+                const tabletExplanationRight = document.getElementById('tablet_explanation_right');
+                tabletExplanationRight.style.opacity = 0;
+                tabletExplanationLeft.style.opacity=0;
+                setTimeout(() => {
+                    tabletExplanationRight.innerHTML =
+                        '<div style="padding:0 15px">태블릿의 <strong style="color:red">홈버튼</strong>으로<br/>게임을 <strong style="color:red">끄고</strong> 바탕화면으로 나갈 수 있습니다.</div>'
+                    tabletExplanationRight.style.opacity = 1;
+                }, 1000)
                 iconsClicked.forEach((ele, i) => {
                     if (ele && idx !== i) {
                         icons[i].classList.remove('icon_clicked');
@@ -624,7 +756,6 @@
             }
 
         }
-        createTictactoGame();
         const tictactoeCover = document.getElementById('tictactoe_cover');
         const tictactoeWindow = document.getElementById('tictactoe_window');
 
@@ -838,7 +969,7 @@
                             }, 1200)
                             chanceInfo.textContent = `남은 기회 : ${chance}번`;
                             if (chance === 0) {
-                                lastCardStage = cardStage - 1;
+                                lastOrderStage = orderStage - 1;
                                 countCover.style.display = 'flex';
                                 countCover.children[0].style.fontSize = '4rem';
                                 countCover.children[0].textContent = '처음부터 다시하기';
@@ -891,7 +1022,7 @@
                             transparentCover.style.display = 'none';
                         }
                     }, 500)
-                }, idx * 1000)
+                }, 3000 + idx * 1000)
             })
         }
 
@@ -1162,7 +1293,7 @@
             }, 50);
             calendarWindow.style.top = `calc(50% - 250px)`;
             exitCalendarButton.style.display = 'block'
-            createTodoList(currentDate.toISOString().slice(0,10));
+            createTodoList(currentDate.toISOString().slice(0, 10));
             createCalendar(currentDate);
         })
 
@@ -1299,7 +1430,8 @@
             })
             let currentDateString = currentDate.toISOString().slice(0, 7);
             currentDays.forEach(el => {
-                let thisDateInfo = `${currentDateString}-${Number(el.textContent) <10 ? '0'+el.textContent : el.textContent}`
+                let thisDateInfo =
+                    `${currentDateString}-${Number(el.textContent) <10 ? '0'+el.textContent : el.textContent}`
                 if (localStorageData[thisDateInfo] && localStorageData[thisDateInfo].length !== 0) {
                     const point = document.createElement('div');
                     point.classList.add('todo');
@@ -1317,7 +1449,7 @@
                     chosenDate = [currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate
                         .getDate()
                     ];
-                    let dateInfo=chosenDate.map(el=> el <10 ? '0'+el :el.toString()).join('-')
+                    let dateInfo = chosenDate.map(el => el < 10 ? '0' + el : el.toString()).join('-')
                     if (localStorageData[dateInfo] && localStorageData[dateInfo].length !== 0) {
                         createTodoList(dateInfo)
                     } else {
