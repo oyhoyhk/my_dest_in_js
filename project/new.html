@@ -33,6 +33,19 @@
         <div id="exit_clock_button"></div>
         <div id="exit_calendar_button"></div>
         <div id="exit_tablet_button"></div>
+        <div id="exit_note_button"></div>
+    </div>
+    <div id="note_window">
+        <div id="note_record_container"></div>
+        <div id="note_container">
+            <div id="note_block"></div>
+            <div id="note_title">
+                <input type="text" id="note_title_input" placeholder="제목을 입력해주세요">
+                <input type="date" id="note_date_input" value="2021-08-27">
+            </div>
+            <textarea name="note" id="note_detail" cols="30" rows="10" placeholder="내용을 입력해주세요"></textarea>
+            <button id="note_submit">입력하기</button>
+        </div>
     </div>
     <div id="clock_window">
         <div class="clock_box">
@@ -100,6 +113,7 @@
     </div>
     <div id="tablet_window">
         <div id="tablet_home_button"></div>
+        <div id="tablet_home_button_cover"></div>
         <div id="tablet_screen" droppable=true>
             <div class="tablet_icon" id="card_game" draggable=true>
                 <div class="icon_image_container">
@@ -130,6 +144,12 @@
                     <div id="game_count_cover_button">시작하기</div>
                 </div>
                 <div id="game_transparent_cover"></div>
+                <div id="tictactoe_cover">
+                    <div id="tictactoe_window">
+                        <div id="tictactoe_winner"></div>
+                        <div id="tictactoe_button">다시하기</div>
+                    </div>
+                </div>
                 <form id="enroll_cover">
                     <div id="enroll_window">
                         <div id="last_stage_info">겨우 1단계 ...</div>
@@ -184,6 +204,7 @@
         const exitClockButton = document.getElementById('exit_clock_button');
         const exitCalendarButton = document.getElementById('exit_calendar_button');
         const exitTabletButton = document.getElementById('exit_tablet_button');
+        const exitNoteButton = document.getElementById('exit_note_button');
 
         // 시작 인트로 부분
         startButton.addEventListener('click', () => {
@@ -202,6 +223,87 @@
             }, 1000)
         })
 
+        const alertConfirm = document.getElementById('alert_confirm');
+        //노트 클릭 이벤트
+
+        let noteData = localStorage.data ? JSON.parse(localStorage.data) : {};
+        const noteDateInput = document.getElementById('note_date_input');
+        const noteSubmit = document.getElementById('note_submit');
+        const noteWindow = document.getElementById('note_window');
+        const noteTitle = document.getElementById('note_title_input');
+        const noteDetail = document.getElementById('note_detail');
+
+        note.addEventListener('click', () => {
+            noteDateInput.value = new Date().toISOString().slice(0, 10);
+            backgroundCover.style.display = 'block';
+            setTimeout(() => {
+                backgroundCover.style.opacity = 1;
+            }, 50);
+            noteWindow.style.top = `calc(50% - 350px)`;
+            exitNoteButton.style.display = 'block';
+            createNoteRecordsList();            
+        })
+
+        exitNoteButton.addEventListener('click', () => {
+            noteWindow.style.top = '130%';
+            exitNoteButton.style.display = 'none'
+            backgroundCover.style.opacity = 0;
+            setTimeout(() => {
+                backgroundCover.style.display = 'none';
+            }, 900)
+            setTimeout(() => {
+                noteTitle.value = '';
+                noteDetail.value = '';
+            }, 500)
+
+        })
+        function createNoteRecordsList(){
+             days = Object.keys(localStorageData);
+             const recordBackgroundInfo=['rgb(255, 108, 108)','#ffbc57','#ffa060' , '#a6fc75', '#78b5fc' ,'#8e78f1', '#c578f1']; 
+                // console.log(el.replace(/-/g,'.'));
+            const noteRecordCotnainer = document.getElementById('note_record_container');
+            days.forEach(day => {
+                localStorageData[day].forEach((el,idx)=>{
+                    console.log(el);
+                    const record = document.createElement('div');
+                    record.classList.add('note_record');
+
+                    date.classList.add('record_date');
+                    const title = document.createElement('div');
+                    const randomNum = Math.floor(Math.random()*7);
+
+                    record.style.background=recordBackgroundInfo[randomNum];
+                    date.textContent=`${day.replace(/-/, '.')}`
+                    title.textContent=`${el[0].slice(0,3)}...`
+                    record.appendChild(title);
+                    record.appendChild(date);
+                    record.addEventListener('click',()=>{
+                        noteTitle.value=el[0];
+                        noteDetail.value=el[1];
+                        noteDateInput.value=day;
+                    })
+                    noteRecordCotnainer.appendChild(record);
+                })
+            })
+        }
+        noteSubmit.addEventListener('click', (e) => {
+            if(noteTitle.value === ''){
+                loadAlertWindow(false,'제목을 입력해주세요');
+                return;
+            }
+            const dateInfo = noteDateInput.value;
+            const dateValue = dateInfo.split('-').map(el=>parseInt(el));
+            if(!localStorageData[dateInfo]){
+                localStorageData[dateInfo]=[[noteTitle.value, noteDetail.value || '']];
+            }else{
+                localStorageData[dateInfo].push([noteTitle.value, noteDetail.value || '' ]);
+            }
+            localStorage.data = JSON.stringify(localStorageData);
+            loadAlertWindow(true, `${dateValue[0]/100}년 ${dateValue[1]}월 ${dateValue[2]}일에 할일이 등록 되었습니다.`);
+            noteTitle.value='';
+            noteDetail.value='';
+            noteDateInput.value=new Date().toISOString().slice(0,10);
+        })
         // 태블릿 클릭 이벤트 
 
         let tabletPower = false;
@@ -220,6 +322,7 @@
             }, 50);
             tabletWindow.style.top = `calc(50% - 300px)`;
             exitTabletButton.style.display = 'block';
+            requestAnimationFrame(updateStatusBarTime);
         })
 
         exitTabletButton.addEventListener('click', () => {
@@ -255,6 +358,7 @@
 
 
         })
+        let statusMinutes = new Date();
 
 
         // 태블릿 홈 버튼(화면 on/off)
@@ -263,14 +367,23 @@
                 tabletScreen.style.opacity = 1;
                 tabletScreen.style.filter = `blur(0)`;
                 tabletStatusBar.style.opacity = 1;
-                updateStatusBarTime();
                 tabletPower = true;
             } else {
                 if (currentGame !== null) {
                     gameScreen.classList.remove('game_screen_on');
                     scoreScreen.classList.remove('game_screen_on');
                     document.getElementById('game_count_cover_button').textContent = '시작하기';
-                    document.getElementById('game_container').innerHTML = '';
+                    const gameContainer = document.getElementById('game_container')
+                    const stageInfo = document.getElementById('stage_info');
+                    const chanceInfo = document.getElementById('chance_info');
+
+                    stageInfo.textContent = '스테이지 :';
+                    chanceInfo.textContent = '남은 기회 :';
+                    gameContainer.innerHTML = '';
+                    const block = document.createElement('div');
+                    block.classList.add('game_screen_block');
+                    gameContainer.appendChild(block);
+
                     currentGame = null;
 
                     return;
@@ -353,6 +466,12 @@
                 const gameContainer = document.getElementById('game_container');
                 const tabletPin = document.getElementById('tablet_pin');
                 currentGame = el.previousElementSibling.textContent
+                const countCover = document.getElementById('game_count_cover');
+                countCover.style.display = 'flex';
+                countCover.style.fontSize = '4rem';
+                countCover.style.opacity = 1;
+                const chanceInfo = document.getElementById('chance_info');
+                const stageInfo = document.getElementById('stage_info');
 
                 switch (currentGame) {
                     case '카드 맞추기':
@@ -361,6 +480,10 @@
                         scoreScreen.style.background =
                             'linear-gradient(-30deg,rgb(248, 184, 8), rgb(245, 216, 136) 50%, rgb(255, 174, 0) 100%)'
                         tabletPin.style.backgroundImage = 'url("./img/pin.png")';
+                        chanceInfo.textContent = '남은 기회 :';
+                        stageInfo.textContent = '스테이지 :';
+                        chanceInfo.style.fontSize = '2rem';
+                        stageInfo.style.fontSize = '2rem';
                         break;
                     case '순서 맞추기':
                         gameContainer.style.backgroundImage = `url('./img/order-background.jpeg')`;
@@ -368,6 +491,10 @@
                         scoreScreen.style.background =
                             'linear-gradient(-30deg,#279cfc, rgb(177, 228, 252) 50%, #279cfc 100%)'
                         tabletPin.style.backgroundImage = 'url("./img/pin2.png")';
+                        chanceInfo.textContent = '남은 기회 :';
+                        stageInfo.textContent = '스테이지 :';
+                        chanceInfo.style.fontSize = '2rem';
+                        stageInfo.style.fontSize = '2rem';
                         break;
                     case 'TicTacToe':
                         gameContainer.style.backgroundImage = `url('./img/tictactoe-background.jpg')`;
@@ -375,6 +502,11 @@
                         scoreScreen.style.background =
                             'linear-gradient(-30deg,#63ffa9, rgb(199, 255, 236) 50%, #64ffdd 100%)'
                         tabletPin.style.backgroundImage = 'url("./img/pin3.png")';
+                        stageInfo.textContent = '플레이어 O : 마우스 왼쪽';
+                        chanceInfo.textContent = '플레이어 X : 마우스 오른쪽';
+                        chanceInfo.style.fontSize = '1.3rem';
+                        stageInfo.style.fontSize = '1.3rem';
+
                         break;
                     default:
                         break;
@@ -382,7 +514,6 @@
                 createRecordList(currentGame);
 
             })
-            createRecordList(currentGame);
             el.addEventListener('click', (e) => { // 아이콘 클릭 이벤트
                 iconsClicked.forEach((ele, i) => {
                     if (ele && idx !== i) {
@@ -406,16 +537,22 @@
         const countCover = document.getElementById('game_count_cover');
         const enrollCover = document.getElementById('enroll_cover');
 
-        countCover.addEventListener('click', () => {
-            gameStartEffect();
+        countCover.addEventListener('click', (e) => {
             switch (currentGame) {
                 case '카드 맞추기':
+                    gameStartEffect();
                     createCardGame(cardStage);
                     break;
                 case '순서 맞추기':
+                    gameStartEffect();
                     createOrderGame(orderStage);
                     break;
                 case 'TicTacToe':
+                    countCover.style.opacity = 0;
+                    setTimeout(() => {
+                        countCover.style.display = 'none';
+                    }, 500);
+                    createTictactoGame();
                     break;
             }
         })
@@ -443,6 +580,8 @@
                 enrollCover.style.display = 'none';
             }, 1000)
         })
+        currentGame = 'TicTacToe';
+        tictactoeGameRecords = JSON.parse(localStorage.tictactoe);
 
         function createRecordList(game) {
             let records;
@@ -462,21 +601,174 @@
             }
             const recordList = document.getElementById('record_list');
             recordList.innerHTML = '';
-            records.forEach(el => {
-                let list = document.createElement('div');
-                list.classList.add('record_list');
-                let name = document.createElement('div');
-                name.textContent = el[0].length > 8 ? el[0].slice(0, 8) + '...' : el[0];
-                let score = document.createElement('div');
-                score.textContent = el[1] + '단계';
+            if (game === 'TicTacToe') {
+                records.forEach(el => {
+                    let list = document.createElement('div');
+                    list.classList.add('record_list');
+                    list.textContent = el;
+                    recordList.appendChild(list);
+                    return;
+                })
+            } else {
 
-                list.appendChild(name);
-                list.appendChild(score);
+                records.forEach(el => {
+                    let list = document.createElement('div');
+                    list.classList.add('record_list');
+                    let name = document.createElement('div');
+                    name.textContent = el[0].length > 8 ? el[0].slice(0, 8) + '...' : el[0];
+                    let score = document.createElement('div');
+                    score.textContent = el[1] + '단계';
+                    list.appendChild(score);
+                    list.appendChild(name);
 
-                recordList.appendChild(list);
-            })
+                    recordList.appendChild(list);
+                })
+            }
+
         }
+        createTictactoGame();
+        const tictactoeCover = document.getElementById('tictactoe_cover');
+        const tictactoeWindow = document.getElementById('tictactoe_window');
 
+        tictactoeCover.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        })
+        document.getElementById('tictactoe_button').addEventListener('click', () => {
+
+            tictactoeCover.style.opacity = 0;
+            tictactoeWindow.style.transform = 'translateY(-600px)';
+
+            setTimeout(() => {
+                tictactoeCover.style.display = 'none';
+            }, 500)
+            createTictactoGame();
+        })
+
+        function createTictactoGame() {
+            const gameContainer = document.getElementById('game_container');
+            gameContainer.innerHTML = '';
+            const block = document.createElement('div');
+            block.classList.add('game_screen_block');
+
+            gameContainer.appendChild(block);
+            const stageInfo = document.getElementById('stage_info');
+            const chanceInfo = document.getElementById('chance_info');
+
+            stageInfo.textContent = '플레이어 O : 마우스 왼쪽';
+            chanceInfo.textContent = '플레이어 X : 마우스 오른쪽';
+            stageInfo.style.fontSize = '1.3rem';
+            chanceInfo.style.fontSize = '1.3rem';
+            let left = [];
+            let right = [];
+            for (let i = 0; i < 3; i++) {
+                const row = document.createElement('div');
+                row.classList.add('tictactoe_row');
+                for (let j = 0; j < 3; j++) {
+                    const borderValue = '3px solid rgb(14 175 0)';
+                    const box = document.createElement('div');
+                    const idx = i * 3 + j;
+                    box.addEventListener('mousedown', e => {
+                        let isRightButton;
+                        if ("which" in e) // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+                            isRightButton = e.which == 3;
+                        else if ("button" in e) // IE, Opera 
+                            isRightButton = e.button == 2;
+
+                        const div = document.createElement('div');
+
+                        if (!isRightButton) {
+                            if (left.length + 1 - right.length === 2) return;
+                            if (left.includes[idx] || right.includes[idx]) return;
+                            left.push(idx);
+                            div.classList.add('tictactoe_o')
+                            e.target.appendChild(div);
+                        } else {
+                            if (right.length + 1 - left.length === 2) return;
+                            if (left.includes[idx] || right.includes[idx]) return;
+                            right.push(idx);
+                            div.classList.add('tictactoe_x')
+                            e.target.appendChild(div);
+                        }
+                        let answer = checkTictactoe(left, right);
+                        const tictactoeCover = document.getElementById('tictactoe_cover');
+                        const tictactoeWindow = document.getElementById('tictactoe_window');
+                        const tictactoeWinner = document.getElementById('tictactoe_winner');
+
+                        if (answer) {
+
+                            tictactoeCover.style.display = 'flex';
+                            setTimeout(() => {
+                                tictactoeCover.style.opacity = 1;
+                                tictactoeWindow.style.transform = 'translateY(0)';
+                            }, 50)
+                            if (answer === 'left') {
+                                tictactoeWinner.innerHTML = '플레이어 <span id="player_o">O</span> 승리!'
+                                tictactoeGameRecords.push('플레이어 O 승리');
+                            } else {
+                                tictactoeWinner.innerHTML = '플레이어 <span id="player_x">X</span> 승리!'
+                                tictactoeGameRecords.push('플레이어 X 승리');
+                            }
+
+                            localStorage.tictactoe = JSON.stringify(tictactoeGameRecords);
+                            createRecordList(currentGame);
+                        }
+                        if (left.length + right.length === 9 && !answer) {
+                            tictactoeCover.style.display = 'flex';
+                            setTimeout(() => {
+                                tictactoeCover.style.opacity = 1;
+                                tictactoeWindow.style.transform = 'translateY(0)';
+                            }, 50)
+                            tictactoeWinner.textContent = '무승부네요';
+                            tictactoeGameRecords.push('무승부');
+                            localStorage.tictactoe = JSON.stringify(tictactoeGameRecords);
+                            createRecordList(currentGame);
+                        }
+                    })
+                    box.addEventListener('contextmenu', e => {
+                        e.preventDefault();
+                    })
+                    box.classList.add('tictactoe_box');
+                    if (idx % 3 === 0) {
+                        box.style.borderRight = borderValue;
+                    } else if (idx % 3 === 1) {
+                        box.style.borderLeft = borderValue;
+                        box.style.borderRight = borderValue;
+                    } else {
+                        box.style.borderLeft = borderValue;
+                    }
+                    if (Math.floor(idx / 3) === 0) {
+                        box.style.borderBottom = borderValue;
+                    } else if (Math.floor(idx / 3) === 1) {
+                        box.style.borderTop = borderValue;
+                        box.style.borderBottom = borderValue;
+                    } else {
+                        box.style.borderTop = borderValue;
+                    }
+                    row.appendChild(box);
+                }
+                gameContainer.appendChild(row);
+            }
+        }
+        const tictactoeAnswer = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ]
+
+        function checkTictactoe(left, right) {
+            for (let i = 0; i < tictactoeAnswer.length; i++) {
+                if (left.includes(tictactoeAnswer[i][0]) && left.includes(tictactoeAnswer[i][1]) && left.includes(
+                        tictactoeAnswer[i][2])) return 'left';
+                if (right.includes(tictactoeAnswer[i][0]) && right.includes(tictactoeAnswer[i][1]) && right.includes(
+                        tictactoeAnswer[i][2])) return 'right';
+            }
+            return false;
+        }
         // const orderGameStage = [2, 3, 3, 3, 4, 4, 5];
         // const orderGameChance = [1, 1, 2, 2, 3, 3, 4];
         // const orderGameNumber = [4, 5, 7, 9, 12, 16, 20];
@@ -492,8 +784,6 @@
             const lastStageInfo = document.getElementById('last_stage_info');
             const enrollCover = document.getElementById('enroll_cover');
             let userInput = [];
-            console.log(answerArray);
-            console.log(stageNumber);
 
             stageInfo.textContent = `스테이지 : ${stage}단계`;
             chanceInfo.textContent = `남은 기회 : ${chance}번`;
@@ -542,12 +832,12 @@
                         } else {
                             chance--;
                             div.classList.add('order_box_wrong');
-                            const transparentCover=document.getElementById('game_transparent_cover');
-                            transparentCover.style.display='block';
-                            setTimeout(()=>{
+                            const transparentCover = document.getElementById('game_transparent_cover');
+                            transparentCover.style.display = 'block';
+                            setTimeout(() => {
                                 div.classList.remove('order_box_wrong');
-                                transparentCover.style.display='none';
-                            },1200)
+                                transparentCover.style.display = 'none';
+                            }, 1200)
                             chanceInfo.textContent = `남은 기회 : ${chance}번`;
                             if (chance === 0) {
                                 lastCardStage = cardStage - 1;
@@ -797,11 +1087,14 @@
         }
 
         function updateStatusBarTime() {
-            const statusTime = document.getElementById('status_time');
-            const date = new Date();
-            const timeInfo =
-                `${date.getFullYear()%100}년 ${date.getMonth()+1}월 ${date.getDate()}일 ${date.getHours() >= 12 ? '오후' : '오전'} ${date.getHours() > 12 ? date.getHours()-12 : date.getHours()}시 ${date.getMinutes()}분`
-            statusTime.textContent = timeInfo;
+            if (statusMinutes.getMinutes() !== new Date().getMinutes()) {
+                const statusTime = document.getElementById('status_time');
+                const date = new Date();
+                const timeInfo =
+                    `${date.getFullYear()%100}년 ${date.getMonth()+1}월 ${date.getDate()}일 ${date.getHours() >= 12 ? '오후' : '오전'} ${date.getHours() > 12 ? date.getHours()-12 : date.getHours()}시 ${date.getMinutes()}분`
+                statusTime.textContent = timeInfo;
+                requestAnimationFrame(updateStatusBarTime);
+            }
         }
 
         function createRandomImageArray(cardNumber) {
@@ -830,32 +1123,35 @@
 
         function gameStartEffect(string) {
             const countCover = document.getElementById('game_count_cover');
-
-            countCover.style.display = 'none';
-            // if (string) {
-            //     countCover.children[0].textContent = string;
-            // }
-            // countCover.children[0].style.fontSize = '4rem';
-            // let count = 3;
-            // while (count !== 0) {
-            //     (function (x) {
-            //         setTimeout(() => {
-            //             countCover.children[0].classList.add('game_count_blur');
-            //             setTimeout(() => {
-            //                 countCover.children[0].style.fontSize = '14rem';
-            //                 countCover.children[0].classList.remove('game_count_blur');
-            //                 countCover.children[0].textContent = x;
-            //             }, 400)
-            //         }, 400 + (3 - x) * 800)
-            //     })(count)
-            //     count--;
-            // }
-            // setTimeout(() => {
-            //     countCover.style.opacity = 0;
-            //     setTimeout(() => {
-            //         countCover.style.display = 'none';
-            //     }, 500)
-            // }, 2800)
+            const homeButtonCover = document.getElementById('tablet_home_button_cover');
+            homeButtonCover.style.display = 'block';
+            // countCover.style.display = 'none';
+            if (string) {
+                countCover.children[0].textContent = string;
+            }
+            countCover.children[0].style.fontSize = '4rem';
+            let count = 3;
+            while (count !== 0) {
+                (function (x) {
+                    setTimeout(() => {
+                        countCover.children[0].classList.add('game_count_blur');
+                        setTimeout(() => {
+                            countCover.children[0].style.fontSize = '14rem';
+                            countCover.children[0].classList.remove('game_count_blur');
+                            countCover.children[0].textContent = x;
+                        }, 400)
+                    }, 400 + (3 - x) * 800)
+                })(count)
+                count--;
+            }
+            setTimeout(() => {
+                countCover.style.opacity = 0;
+                setTimeout(() => {
+                    countCover.children[0].style.fontSize = '4rem';
+                    countCover.style.display = 'none';
+                    homeButtonCover.style.display = 'none';
+                }, 500)
+            }, 2800)
         }
         // }       0    500      1000          1500    200    
         //시작하기 - 블러 - 블러꺼지면서 3 - 블러 - 블러꺼지면서 2 -블러 - 블러꺼지면서 1 - 커버 사라짐
@@ -868,6 +1164,8 @@
             }, 50);
             calendarWindow.style.top = `calc(50% - 250px)`;
             exitCalendarButton.style.display = 'block'
+            createTodoList(currentDate.toISOString().slice(0,10));
+            createCalendar(currentDate);
         })
 
         exitCalendarButton.addEventListener('click', () => {
@@ -885,15 +1183,14 @@
         const dayValue = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
         const today = [currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate()]
         let chosenDate = [...today];
-        let localStorageData = localStorage['data'] ? JSON.parse(localStorage.data) : {};
+        let localStorageData = localStorage.data ? JSON.parse(localStorage.data) : {};
 
         createCalendar(currentDate);
         const postButton = document.getElementById('calendar_post_button');
         const pastButton = document.getElementById('calendar_past_button');
         const todoInputButton = document.getElementById('todo_submit_button');
         const todoTextInput = document.getElementById('todo_input');
-        const alertConfirm = document.getElementById('alert_confirm');
-        const alertKeyInput = document.getElementById('alert_key_input');
+
         todoInputButton.addEventListener('click', () => {
             saveTodoInLocalStorage(today, chosenDate, todoTextInput.value);
             createCalendar(currentDate);
@@ -945,7 +1242,7 @@
             copyDate.setDate(currentDate.getDate());
             calendarDetailDate.textContent = copyDate.getDate();
             calendarDetailDay.textContent = dayValue[copyDate.getDay()];
-            let dateString = copyDate.getFullYear() + '.' + (copyDate.getMonth() + 1) + '.' + copyDate.getDate();
+            let dateString = copyDate.toISOString().slice(0, 10)
             if (localStorageData[dateString] && localStorageData[dateString].length !== 0) {
                 createTodoList(dateString);
             } else {
@@ -1002,9 +1299,9 @@
                     createCalendar(date);
                 })
             })
-            let currentDateString = currentDate.getFullYear() + '.' + (currentDate.getMonth() + 1) + '.';
+            let currentDateString = currentDate.toISOString().slice(0, 7);
             currentDays.forEach(el => {
-                let thisDateInfo = currentDateString + el.textContent;
+                let thisDateInfo = `${currentDateString}-${Number(el.textContent) <10 ? '0'+el.textContent : el.textContent}`
                 if (localStorageData[thisDateInfo] && localStorageData[thisDateInfo].length !== 0) {
                     const point = document.createElement('div');
                     point.classList.add('todo');
@@ -1022,9 +1319,9 @@
                     chosenDate = [currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate
                         .getDate()
                     ];
-                    if (localStorageData[chosenDate.join('.')] && localStorageData[chosenDate.join('.')]
-                        .length !== 0) {
-                        createTodoList(chosenDate.join('.'))
+                    let dateInfo=chosenDate.map(el=> el <10 ? '0'+el :el.toString()).join('-')
+                    if (localStorageData[dateInfo] && localStorageData[dateInfo].length !== 0) {
+                        createTodoList(dateInfo)
                     } else {
                         createTodoList();
                     }
@@ -1035,10 +1332,11 @@
         function createTodoList(dataInfo) {
             const todoContainer = document.getElementById('calendar_todo_lists');
             todoContainer.innerHTML = '';
-            if (!dataInfo) {
+            if (!dataInfo || !localStorageData[dataInfo]) {
                 todoContainer.textContent = '할 일을 입력해주세요';
                 return;
             }
+
             const todos = localStorageData[dataInfo];
             todos.forEach((el, idx) => {
                 const todo = document.createElement('div');
@@ -1054,9 +1352,8 @@
                 todoDeleteButton.classList.add('calendar_todo_delete');
 
                 todoDeleteButton.addEventListener('click', () => {
-                    const dateInfo =
-                        `${currentDate.getFullYear()}.${currentDate.getMonth()+1}.${currentDate.getDate()}`;
-                    localStorageData[dateInfo].splice([todoDeleteButton.todoIndex, 1]);
+                    const dateInfo = currentDate.toISOString().slice(0, 10);
+                    localStorageData[dateInfo].splice(todoDeleteButton.todoIndex, 1);
                     localStorage.data = JSON.stringify(localStorageData);
                     if (localStorageData[dateInfo].length === 0) {
                         createCalendar(currentDate);
@@ -1073,7 +1370,7 @@
         }
 
         function saveTodoInLocalStorage(today, chosenDate, data) {
-            const dateInfo = chosenDate.join('.')
+            const dateInfo = chosenDate.map(el => el < 10 ? '0' + el : el.toString()).join('-')
             if (new Date(today).valueOf() <= new Date(chosenDate).valueOf()) {
                 if (data.trim().length === 0) {
                     loadAlertWindow(false, '내용을 입력해주세요');
@@ -1086,7 +1383,7 @@
                     localStorageData[dateInfo] = [];
 
                 }
-                localStorageData[dateInfo].push([data]);
+                localStorageData[dateInfo].push([data, '']);
                 localStorage.data = JSON.stringify(localStorageData)
             } else {
                 loadAlertWindow(false, '이미 지난 날엔 계획을 세울 수 없습니다');
@@ -1175,6 +1472,7 @@
                 clearInterval(clockInterval)
             })
             let clockInterval = null;
+            createClock();
 
             function createClock() {
                 const spaces = document.querySelectorAll('.space');
@@ -1194,48 +1492,71 @@
                     el.textContent = clockValue[idx];
                 })
 
-                clockInterval = setInterval(() => {
-                    clockValue[5] += 1;
-                    moved[5] = true;
-                    if (clockValue[5] === 10) {
-                        clockValue[5] = 0;
-                        clockValue[4] += 1;
-                        moved[4] = true;
-                        if (clockValue[4] > 5) {
-                            clockValue[4] = 0;
-                            clockValue[3] += 1;
-                            moved[3] = true;
-                            if (clockValue[3] === 10) {
-                                clockValue[3] = 0;
-                                clockValue[2] += 1;
-                                moved[2] = true;
-                                if (clockValue[2] > 5) {
-                                    clockValue[2] = 0;
-                                    clockValue[1] += 1;
-                                    moved[1] = true;
-                                    if (clockValue[0] < 2 && clockValue[1] === 10) {
-                                        clockValue[1] = 0;
-                                        clockValue[0] += 1;
-                                        moved[0] = true;
-                                    } else if (clockValue[0] === 2 && clockValue[1] === 4) {
-                                        clockValue[1] = 0;
-                                        clockValue[0] = 0;
-                                    }
-                                }
-                            }
-                        }
+                // clockInterval = setInterval(() => {
+                //     clockValue[5] += 1;
+                //     moved[5] = true;
+                //     if (clockValue[5] === 10) {
+                //         clockValue[5] = 0;
+                //         clockValue[4] += 1;
+                //         moved[4] = true;
+                //         if (clockValue[4] > 5) {
+                //             clockValue[4] = 0;
+                //             clockValue[3] += 1;
+                //             moved[3] = true;
+                //             if (clockValue[3] === 10) {
+                //                 clockValue[3] = 0;
+                //                 clockValue[2] += 1;
+                //                 moved[2] = true;
+                //                 if (clockValue[2] > 5) {
+                //                     clockValue[2] = 0;
+                //                     clockValue[1] += 1;
+                //                     moved[1] = true;
+                //                     if (clockValue[0] < 2 && clockValue[1] === 10) {
+                //                         clockValue[1] = 0;
+                //                         clockValue[0] += 1;
+                //                         moved[0] = true;
+                //                     } else if (clockValue[0] === 2 && clockValue[1] === 4) {
+                //                         clockValue[1] = 0;
+                //                         clockValue[0] = 0;
+                //                     }
+                //                 }
+                //             }
+                //         }
+                //     }
+                //     clockNumbers.forEach((el, idx) => {
+                //         if (moved[idx]) {
+                //             rotateDegree[idx] += 360;
+                //             el.style.transform = `rotateX(${rotateDegree[idx]}deg)`;
+                //         }
+                //         setTimeout(() => {
+                //             el.textContent = clockValue[idx];
+                //         }, 500)
+                //     })
+                //     moved = moved.map(el => false);
+                // }, 1000)
+                let currentSecond = new Date().getSeconds();
+                let clocks = []
+
+                function clockWorking() {
+                    if (currentSecond !== new Date().getSeconds()) {
+                        let hours = new Date().getHours().toString()
+                        if (hours.length === 1) hours = '0' + hours;
+                        hours.split('').forEach(el => clocks.push(el));
+                        let minutes = new Date().getMinutes().toString();
+                        if (minutes.length === 1) minutes = '0' + minutes;
+                        minutes.split('').forEach(el => clocks.push(el));
+                        let seconds = new Date().getSeconds().toString()
+                        if (seconds.length === 1) seconds = '0' + seconds;
+                        seconds.split('').forEach(el => clocks.push(el));
+                        clockNumbers.forEach((el, idx) => {
+                            el.textContent = clocks[idx];
+                        })
+                        clocks = [];
                     }
-                    clockNumbers.forEach((el, idx) => {
-                        if (moved[idx]) {
-                            rotateDegree[idx] += 360;
-                            el.style.transform = `rotateX(${rotateDegree[idx]}deg)`;
-                        }
-                        setTimeout(() => {
-                            el.textContent = clockValue[idx];
-                        }, 500)
-                    })
-                    moved = moved.map(el => false);
-                }, 1000)
+
+                    requestAnimationFrame(clockWorking);
+                }
+                requestAnimationFrame(clockWorking);
             }
         }
     </script>
