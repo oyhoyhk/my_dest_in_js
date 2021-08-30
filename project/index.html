@@ -177,7 +177,7 @@
                         <div id="tictactoe_button">다시하기</div>
                     </div>
                 </div>
-                <form id="enroll_cover">
+                <div id="enroll_cover">
                     <div id="enroll_window">
                         <div id="last_stage_info">겨우 1단계 ...</div>
                         <div id="enroll_msg">이름을 남겨주세요!</div>
@@ -186,7 +186,7 @@
                             <button id="enroll_button" type="submit">확인</button>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
             <div id="tablet_score_screen">
                 <div id="score_screen_space"></div>
@@ -218,6 +218,10 @@
         </div>
     </div>
     <script>
+        window.addEventListener('keydown', e => {
+            if (e.key === 'Tab') e.preventDefault();
+        })
+
         const startButton = document.getElementById('start_button');
         const mainCover = document.getElementById('main_cover');
         const screen = document.getElementById('screen');
@@ -251,27 +255,27 @@
                     calendar.style.opacity = 1;
                     note.style.opacity = 1;
                     clock.style.opacity = 1;
-                    screenHomeButton.style.opacity=1;
-                    document.getElementById('screen_transparent_cover').style.display='none';
+                    screenHomeButton.style.opacity = 1;
+                    document.getElementById('screen_transparent_cover').style.display = 'none';
                 }, 1000)
             }, 1000)
         })
-        screenHomeButton.addEventListener('click',()=>{
-            tablet.style.opacity=0;
-            calendar.style.opacity=0;
-            note.style.opacity=0;
-            clock.style.opacity=0;
-            screenHomeButton.style.opacity=0;
-            document.getElementById('screen_transparent_cover').style.display='block';
-            setTimeout(()=>{
+        screenHomeButton.addEventListener('click', () => {
+            tablet.style.opacity = 0;
+            calendar.style.opacity = 0;
+            note.style.opacity = 0;
+            clock.style.opacity = 0;
+            screenHomeButton.style.opacity = 0;
+            document.getElementById('screen_transparent_cover').style.display = 'block';
+            setTimeout(() => {
                 screen.style.opacity = 0;
                 mainCover.style.display = 'block';
                 desk.style.transform = `rotateZ(-25deg) translateX(-1300px) translateY(200px)`;
                 wall.style.transform = `rotateZ(-25deg) translateX(1000px) translateY(-324px)`;
-                setTimeout(()=>{
-                    mainCover.style.opacity=1;
+                setTimeout(() => {
+                    mainCover.style.opacity = 1;
                 })
-            },1000)
+            }, 1000)
 
         })
 
@@ -491,7 +495,7 @@
                             '<div id="tablet_explanation_right_text">태블릿의 <strong style="color:red">홈버튼</strong>으로<br/>전원을 <strong style="color:red">켜거나 끌 수</strong> 있습니다.</div>';
                         tabletExplanationRight.style.opacity = 1;
                     }, 1000)
-                    tabletExplanationLeft.style.opacity=1;
+                    tabletExplanationLeft.style.opacity = 1;
                     gameScreen.classList.remove('game_screen_on');
                     scoreScreen.classList.remove('game_screen_on');
                     document.getElementById('game_count_cover_button').textContent = '시작하기';
@@ -582,7 +586,7 @@
                 const tabletExplanationLeft = document.getElementById('tablet_explanation_left');
                 const tabletExplanationRight = document.getElementById('tablet_explanation_right');
                 tabletExplanationRight.style.opacity = 0;
-                tabletExplanationLeft.style.opacity=0;
+                tabletExplanationLeft.style.opacity = 0;
                 setTimeout(() => {
                     tabletExplanationRight.innerHTML =
                         '<div style="padding:0 15px">태블릿의 <strong style="color:red">홈버튼</strong>으로<br/>게임을 <strong style="color:red">끄고</strong> 바탕화면으로 나갈 수 있습니다.</div>'
@@ -668,11 +672,14 @@
         // const cardGameStage = [4, 6, 8, 12, 16, 20, 24];
         // const cardGameChance = [1, 2, 2, 3, 3, 4, 4];
         const countCover = document.getElementById('game_count_cover');
+        const countCoverButton = document.getElementById('game_count_cover_button');
         const enrollCover = document.getElementById('enroll_cover');
+        const enrollButton = document.getElementById('enroll_button')
+        countCoverButton.addEventListener('click', (e) => {
 
-        countCover.addEventListener('click', (e) => {
             switch (currentGame) {
                 case '카드 맞추기':
+                    
                     gameStartEffect();
                     createCardGame(cardStage);
                     break;
@@ -690,7 +697,7 @@
             }
         })
 
-        enrollCover.addEventListener('submit', (e) => {
+        enrollButton.addEventListener('click', (e) => {
             const name = document.getElementById('enroll');
             const enrollWindow = document.getElementById('enroll_window');
 
@@ -998,8 +1005,9 @@
                 }
                 gameContainer.appendChild(row);
             }
-
-            showOrder(answerArray);
+            setTimeout(()=>{
+                showOrder(answerArray);
+            },3700)
         }
 
         function createOrderArray(stage) {
@@ -1023,7 +1031,7 @@
                             transparentCover.style.display = 'none';
                         }
                     }, 500)
-                }, 3000 + idx * 1000)
+                }, idx * 1000)
             })
         }
 
@@ -1046,6 +1054,7 @@
             chanceInfo.textContent = `남은 기회 : ${chance}번`;
 
             let userInput = [];
+
 
             for (let i = 0; i < rowNum; i++) {
                 const row = document.createElement('div');
@@ -1252,6 +1261,11 @@
         }
 
         function gameStartEffect(string) {
+            const transparentCover = document.getElementById('game_transparent_cover');
+                    transparentCover.style.display = 'block';
+                    setTimeout(() => {
+                        transparentCover.style.display = 'none';
+                    }, 3500)
             const countCover = document.getElementById('game_count_cover');
             const homeButtonCover = document.getElementById('tablet_home_button_cover');
             homeButtonCover.style.display = 'block';
