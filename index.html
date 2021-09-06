@@ -5,14 +5,219 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <title>My Desk</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./new.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@700&family=Oswald:wght@500&family=Yeon+Sung&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
 </head>
 
 <body>
-    <h1> 20100008 오윤환</h1>
-    <a href="/ch8/">Chapter 8 calendar</a> <br/>
-    <a href="/ch9/">Chapter 9 3D Page</a> <br/>
-    <a href="/project/">Project</a>
+
+    <div id="screen">
+        <div id="wall"></div>
+        <div id="desk"></div>
+        <div id="tablet"></div>
+        <div id="clock"></div>
+        <div id="calendar"></div>
+        <div id="note"></div>
+        <div id="clock_detail_container">
+            <div id="clock_detail">requestAnimationFrame 메소드를 이용해 만든 <br /><strong style="color:#8bb7f8">디지털
+                    시계</strong>입니다</div>
+        </div>
+        <div id="tablet_detail_container">
+            <div id="tablet_detail">Javascript와 css 요소를 조합하여 만든 <strong
+                    style="color:rgb(226, 118, 118)">태블릿</strong>입니다. <strong style="color:rgb(226, 118, 118)">세 가지
+                    게임</strong>을 포함하고 있습니다</div>
+        </div>
+        <div id="note_detail_container">
+            <div id="note_detail_explanation">localStorage 세션과 연동되어 개인 컴퓨터에 기록을 남길 수 있는 <strong
+                    style="color:rgb(226, 118, 118)">메모장</strong></strong>입니다. 달력과 연동이 됩니다.</div>
+        </div>
+        <div id="calendar_detail_container">
+            <div id="calendar_detail">Javascript로 제작한 <strong style="color:rgb(226, 118, 118)">달력</strong>입니다. 일정을 등록할 수
+                있고 메모장과 연동됩니다.</div>
+        </div>
+        <div id="screen_home_button"></div>
+    </div>
+    <div id="screen_transparent_cover"></div>
+    <div id="main_cover">
+        <div id="start_button"></div>
+    </div>
+    <div id="background_cover">
+        <div id="exit_clock_button"></div>
+        <div id="exit_calendar_button"></div>
+        <div id="exit_tablet_button"></div>
+        <div id="exit_note_button"></div>
+    </div>
+    <div id="note_window">
+        <div id="note_record_container"></div>
+        <div id="note_container">
+            <div id="note_block"></div>
+            <div id="note_title">
+                <input type="text" id="note_title_input" placeholder="제목을 입력해주세요">
+                <input type="date" id="note_date_input" value="2021-08-27">
+            </div>
+            <textarea name="note" id="note_detail" cols="30" rows="10" placeholder="내용을 입력해주세요"></textarea>
+            <button id="note_submit">입력하기</button>
+        </div>
+    </div>
+    <div id="clock_window">
+        <div class="clock_box">
+            <div class="clock_back"></div>
+            <div id="hour1" class="clock_number">4</div>
+        </div>
+        <div class="clock_box">
+            <div class="clock_back"></div>
+            <div id="hour2" class="clock_number"></div>
+        </div>
+        <div class="space">:</div>
+        <div class="clock_box">
+            <div class="clock_back"></div>
+            <div id="min1" class="clock_number"></div>
+        </div>
+        <div class="clock_box">
+            <div class="clock_back"></div>
+            <div id="min2" class="clock_number"></div>
+        </div>
+        <div class="space">:</div>
+        <div class="clock_box">
+            <div class="clock_back"></div>
+            <div id="second1" class="clock_number"></div>
+        </div>
+        <div class="clock_box">
+            <div class="clock_back"></div>
+            <div id="second2" class="clock_number"></div>
+        </div>
+    </div>
+    <div id="calendar_window">
+        <div id="calendar_left">
+            <div id="calendar_detail_date">23</div>
+            <div id="calendar_detail_day">Monday</div>
+            <div id="calendar_detail_todos">
+                <div id="calendar_todos">오늘의 할일</div>
+                <div id="calendar_todo_lists">할 일을 등록해 주세요</div>
+                <div id="calendar_todo_input_container">
+                    <input type="text" id="todo_input" placeholder="할 일을 입력해주세요">
+                    <div id="todo_submit_button"></div>
+                </div>
+            </div>
+        </div>
+        <div id="calendar_right">
+            <div id="calendar_upper">
+                <div id="calendar_past_button"></div>
+                <div id="calendar_post_button"></div>
+                <div id="calendar_month">August</div>
+                <div id="calendar_year">2021</div>
+            </div>
+            <div id="calendar_below">
+                <div id="calendar_container_day">
+                    <div id="calendar_today_button">TODAY</div>
+                    <div class="calendar_day sun">Sun</div>
+                    <div class="calendar_day">Mon</div>
+                    <div class="calendar_day">Tue</div>
+                    <div class="calendar_day">Wed</div>
+                    <div class="calendar_day">Thu</div>
+                    <div class="calendar_day">Fri</div>
+                    <div class="calendar_day sat">Sat</div>
+                </div>
+                <div id="calendar_container">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tablet_window">
+        <div id="tablet_home_button"></div>
+        <div id="tablet_home_button_cover"></div>
+        <div id="tablet_explanation_right"></div>
+        <div id="tablet_explanation_left">
+            게임 아이콘을<br />
+            <strong style="color:red">클릭</strong>하여 <strong style="color:red">선택</strong>하거나 <br /> <strong
+                style="color:red">드래그</strong>할 수 있고 <br />
+            <strong style="color:blue">더블 클릭</strong>하여 게임을 <br /><strong style="color:blue">실행</strong>할 수 있습니다.
+        </div>
+        <div id="tablet_screen" droppable=true>
+            <div class="tablet_icon" id="card_game" draggable=true>
+                <div class="icon_image_container">
+                    <div id="card_image"></div>
+                </div>
+                <div class="icon_title">카드 맞추기</div>
+                <div class="icon_clicked_cover"></div>
+            </div>
+            <div class="tablet_icon" id="order_game" draggable=true>
+                <div class="icon_image_container">
+                    <div id="order_image"></div>
+                </div>
+                <div class="icon_title">순서 맞추기</div>
+                <div class="icon_clicked_cover"></div>
+            </div>
+            <div class="tablet_icon" id="tictactoe_game" draggable=true>
+                <div class="icon_image_container">
+                    <div id="tictactoe_image"></div>
+                </div>
+                <div class="icon_title">TicTacToe</div>
+                <div class="icon_clicked_cover"></div>
+            </div>
+            <div id="tablet_game_screen">
+                <div id="game_container">
+                    <div class="game_screen_block"></div>
+                </div>
+                <div id="game_count_cover">
+                    <div id="game_count_cover_button">시작하기</div>
+                </div>
+                <div id="game_transparent_cover"></div>
+                <div id="tictactoe_cover">
+                    <div id="tictactoe_window">
+                        <div id="tictactoe_winner"></div>
+                        <div id="tictactoe_button">다시하기</div>
+                    </div>
+                </div>
+                <div id="enroll_cover">
+                    <div id="enroll_window">
+                        <div id="last_stage_info">겨우 1단계 ...</div>
+                        <div id="enroll_msg">이름을 남겨주세요!</div>
+                        <div id="enroll_input_box">
+                            <input type="text" id="enroll" placeholder="Player" name="name">
+                            <button id="enroll_button" type="submit">확인</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="tablet_score_screen">
+                <div id="score_screen_space"></div>
+                <div id="stage_info">스테이지 : </div>
+                <div id="chance_info">남은 기회 :</div>
+                <div id="record_info">
+                    <div>게임 기록</div>
+                    <div id="record_list"></div>
+                </div>
+                <div id="tablet_pin"></div>
+            </div>
+        </div>
+        <div id="tablet_camera"></div>
+        <div id="tablet_status_bar">
+            <div id="status_time">21년 8월 24일 오후 2시 1분</div>
+            <div id="status_icons">
+                <div id="status_wifi"></div>
+                <div id="status_battery_percentage">100%</div>
+                <div id="status_battery"></div>
+            </div>
+        </div>
+    </div>
+    <div id="alert_cover">
+        <div id="alert_window">
+            <div id="alert_image"></div>
+            <div id="alert_message">등록 실패</div>
+            <div id="alert_detail">이미 지난 날엔 목표를 세울 수 없습니다</div>
+            <input type="submit" id="alert_confirm" value="확인">
+        </div>
+    </div>
+    <script src="new.js"></script>
 </body>
 
 </html>
